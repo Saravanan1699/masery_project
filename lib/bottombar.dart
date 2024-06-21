@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Categories.dart';
+import 'home.dart';
 
 
 class BottomBar extends StatelessWidget {
@@ -41,7 +42,7 @@ class BottomBar extends StatelessWidget {
 
         switch (index) {
           case 0:
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Categories()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
             break;
           case 1:
             Navigator.push(context, MaterialPageRoute(builder: (context) => Categories()));

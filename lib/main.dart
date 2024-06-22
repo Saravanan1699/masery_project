@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'Authentication/Sing-in.dart';
-import 'Categories.dart';
-import 'home.dart';
 
 void main() {
   runApp(const MyApp());

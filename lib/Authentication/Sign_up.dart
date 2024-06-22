@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../home.dart';
-import 'Sign_up.dart';
+import 'Sing-in.dart'; // Ensure the correct path to your Signin.dart file
 
-class Signin extends StatefulWidget {
-  const Signin({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<Signin> createState() => _SigninState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _SigninState extends State<Signin> {
+class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   bool _obscureText1 = true;
 
   @override
   Widget build(BuildContext context) {
-    // Getting the screen width and height for responsive design
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       resizeToAvoidBottomInset: true, // Allow bottom inset to avoid keyboard
       backgroundColor: Colors.white,
@@ -38,7 +35,7 @@ class _SigninState extends State<Signin> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Hello Again!',
+                    'Register Account',
                     style: GoogleFonts.raleway( // Using Google Fonts
                       fontSize: screenWidth * 0.07, // Responsive font size
                       fontWeight: FontWeight.w700,
@@ -63,6 +60,47 @@ class _SigninState extends State<Signin> {
                 ],
               ),
               SizedBox(height: screenHeight * 0.1), // Responsive height
+              Row(
+                children: [
+                  Text(
+                    'Name',
+                    style: GoogleFonts.raleway( // Using Google Fonts
+                      fontSize: screenWidth * 0.04, // Responsive font size
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF2B2B2B),
+                    ),
+                    textAlign: TextAlign.center, // Align the text to the center
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.02),
+              TextFormField(
+                decoration: InputDecoration(
+                  fillColor: Color(0xFFF7F7F9),
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0), // Curved border
+                    borderSide: BorderSide.none, // No border
+                  ),
+                  labelStyle: TextStyle(
+                    fontSize: screenWidth * 0.045,
+                    color: Color(0xFF6A6A6A),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 15.0,
+                    horizontal: 10.0,
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your name';
+                  } else if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
+                    return 'Name can only contain letters';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: screenHeight * 0.02), // Responsive height
               Row(
                 children: [
                   Text(
@@ -156,29 +194,11 @@ class _SigninState extends State<Signin> {
                   return null;
                 },
               ),
-              SizedBox(height: screenHeight * 0.01),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: () {
-                    // Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPassword()));
-                  },
-                  child: Text(
-                    'Recovery Password ?',
-                    style: GoogleFonts.raleway( // Using Google Fonts
-                      fontSize: screenWidth * 0.035, // Responsive font size
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF707B81),
-                    ),
-                    textAlign: TextAlign.center, // Align the text to the center
-                  ),
-                ),
-              ),
-              SizedBox(height: screenHeight * 0.02),
+              SizedBox(height: screenHeight * 0.05),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Signin()));
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -192,7 +212,7 @@ class _SigninState extends State<Signin> {
                   ),
                 ),
                 child: Text(
-                  'Sign In',
+                  'Sign Up',
                   style: GoogleFonts.raleway( // Using Google Fonts
                     fontSize: screenWidth * 0.04, // Responsive font size
                     fontWeight: FontWeight.w600,
@@ -235,12 +255,12 @@ class _SigninState extends State<Signin> {
                   ],
                 ),
               ),
-              SizedBox(height: screenHeight * 0.06),
+              SizedBox(height: screenHeight * 0.04),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'New User ? ',
+                    'Already Have Account? ',
                     style: GoogleFonts.raleway(
                       fontSize: screenWidth * 0.04, // Responsive font size
                       fontWeight: FontWeight.w500,
@@ -249,10 +269,10 @@ class _SigninState extends State<Signin> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Signin()));
                     },
                     child: Text(
-                      'Create Account',
+                      'Sign In',
                       style: GoogleFonts.raleway(
                         fontSize: screenWidth * 0.04, // Responsive font size
                         fontWeight: FontWeight.w500,
@@ -262,6 +282,7 @@ class _SigninState extends State<Signin> {
                   )
                 ],
               ),
+              SizedBox(height: screenHeight * 0.02),
             ],
           ),
         ),

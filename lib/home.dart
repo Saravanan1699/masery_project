@@ -3,6 +3,8 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'Categories.dart';
 import 'bottombar.dart';
 
+import 'wishlist.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -37,39 +39,37 @@ class _HomePageState extends State<HomePage> {
       {
         'image': 'assets/laptop.png',
         'name':
-        'Acer Aspire Lite AMD Ryzen 5 5500U Premium Thin and Light Laptop (16 GB RAM/512 GB SSD/Windows 11 Home)',
+            'Acer Aspire Lite AMD Ryzen 5 5500U Premium Thin and Light Laptop (16 GB RAM/512 GB SSD/Windows 11 Home)',
         'price': '\$300',
       },
       {
         'image': 'assets/laptop_1.png',
         'name':
-        'Apple 2023 MacBook Pro (16-inch, M3 Max chip with 16‑core CPU and 40‑core GPU, 48GB Unified Memory, 1TB)',
+            'Apple 2023 MacBook Pro (16-inch, M3 Max chip with 16‑core CPU and 40‑core GPU, 48GB Unified Memory, 1TB)',
         'price': '\$700',
       },
       {
         'image': 'assets/laptop_2.png',
         'name':
-        'ASUS VivoBook 15 (2021) Thin and Light Laptop, Dual Core Intel Celeron N4020, 15.6-inch (39.62 cm) HD, (4GB RAM/256GB SSD/Integrated Graphics) ',
+            'ASUS VivoBook 15 (2021) Thin and Light Laptop, Dual Core Intel Celeron N4020, 15.6-inch (39.62 cm) HD, (4GB RAM/256GB SSD/Integrated Graphics) ',
         'price': '\$120',
       },
       {
         'image': 'assets/laptop.png',
         'name':
-        'Lenovo IdeaPad Slim 1 AMD Ryzen 5 5500U 15.6" HD Thin and Light Laptop (16GB/512GB SSD/Windows ',
+            'Lenovo IdeaPad Slim 1 AMD Ryzen 5 5500U 15.6" HD Thin and Light Laptop (16GB/512GB SSD/Windows ',
         'price': '\$450',
       },
       {
         'image': 'assets/laptop_1.png',
         'name':
-        'HONOR MagicBook X16 (2024), 12th Gen Intel Core i5-12450H, 16-inch (40.64 cm) FHD ',
+            'HONOR MagicBook X16 (2024), 12th Gen Intel Core i5-12450H, 16-inch (40.64 cm) FHD ',
         'price': '\$80',
       },
     ];
   }
-
-  List<Map<String, dynamic>> mostfavitem() {
-    return [
-      {
+  List<Map<String, dynamic>> mostpopular = [
+     {
         'image': 'assets/mp_1.png',
         'name': 'Graphics Card',
         'price': '\$300',
@@ -79,7 +79,13 @@ class _HomePageState extends State<HomePage> {
         'image': 'assets/mp_2.png',
         'name': 'Mobile Phone',
         'price': '\$700',
-        'isFavorite': true,
+        'isFavorite': false,
+      },
+      {
+        'image': 'assets/mp_2.png',
+        'name': 'Mobile Phone',
+        'price': '\$700',
+        'isFavorite': false,
       },
       {
         'image': 'assets/mp_3.png',
@@ -91,17 +97,24 @@ class _HomePageState extends State<HomePage> {
         'image': 'assets/mp_4.png',
         'name': 'Electronics',
         'price': '\$450',
-        'isFavorite': true,
+        'isFavorite': false,
       },
       {
         'image': 'assets/mp_5.png',
         'name': 'Accessories',
         'price': '\$80',
-        'isFavorite': true,
+        'isFavorite': false,
       },
-    ];
-  }
+      {
+        'image': 'assets/mp_5.png',
+        'name': 'Accessories',
+        'price': '\$80',
+        'isFavorite': false,
+      },
+    
+  ];
 
+ 
   final List<List<String>> category = [
     [
       'assets/laptop.png',
@@ -145,17 +158,25 @@ class _HomePageState extends State<HomePage> {
     List<String> imagePaths = getImagePaths();
     List<String> backgroundImages = getBackgroundImages();
     List<Map<String, String>> products = getProducts();
-    List<Map<String, dynamic>> mostpopular = mostfavitem();
+    
 
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text('Masery Shop')),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            onPressed: () {
-              // Implement profile action
-            },
+     actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Profile()), // Ensure the correct page to navigate
+                );
+              },
+              child: CircleAvatar(
+                backgroundImage: AssetImage('assets/avatar.png'),
+              ),
+            ),
           ),
         ],
       ),
@@ -178,16 +199,12 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: const Icon(Icons.home),
               title: const Text('Home'),
-              onTap: () {
-
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
-              onTap: () {
-
-              },
+              onTap: () {},
             ),
           ],
         ),
@@ -207,7 +224,7 @@ class _HomePageState extends State<HomePage> {
                         decoration: InputDecoration(
                           hintText: 'Search...',
                           prefixIcon:
-                          Icon(Icons.search, color: Color(0xffBBBBBB)),
+                              Icon(Icons.search, color: Color(0xffBBBBBB)),
                           suffixIcon: Icon(
                             Icons.mic,
                             color: Color(0xffBBBBBB),
@@ -255,8 +272,6 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ),
-
-
               Container(
                 height: 200,
                 child: PageView.builder(
@@ -325,12 +340,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors
-                          .blue,
+                      color: Colors.blue,
                       shape: BoxShape.circle,
                     ),
-                    padding: EdgeInsets.all(
-                        8.0),
+                    padding: EdgeInsets.all(8.0),
                     child: Icon(
                       Icons.arrow_forward,
                       size: 25,
@@ -376,7 +389,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             Padding(
                               padding:
-                              const EdgeInsets.symmetric(horizontal: 8.0),
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Text(
                                 products[index]['price']!,
                                 style: TextStyle(
@@ -429,82 +442,84 @@ class _HomePageState extends State<HomePage> {
                   )
                 ],
               ),
-              Container(
-                height: 150,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: mostpopular.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 200,
+     Container(
+        height: 150,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: mostpopular.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  mostpopular[index]['isFavorite'] = !mostpopular[index]['isFavorite'];
+                });
+              },
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                  width: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 70,
+                        width: double.infinity,
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                          image: DecorationImage(
+                            image: AssetImage(mostpopular[index]['image']),
+                            fit: BoxFit.contain,
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              height: 70,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(15)),
-                                image: DecorationImage(
-                                  image:
-                                  AssetImage(mostpopular[index]['image']),
-                                  fit: BoxFit.contain,
-                                ),
+                            Expanded(
+                              child: Text(
+                                mostpopular[index]['price'],
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      mostpopular[index]['price'],
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      mostpopular[index]['isFavorite']
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        mostpopular[index]['isFavorite'] =
-                                        !mostpopular[index]['isFavorite'];
-                                      });
-                                    },
-                                  ),
-                                ],
+                            IconButton(
+                              icon: Icon(
+                                mostpopular[index]['isFavorite']
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: Colors.red,
                               ),
+                              onPressed: () {
+                                setState(() {
+                                  mostpopular[index]['isFavorite'] = !mostpopular[index]['isFavorite'];
+                                });
+                              },
                             ),
                           ],
                         ),
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
               ),
+            );
+          },
+        ),
+      ),
+      
               SizedBox(
                 height: 10,
               ),
@@ -527,19 +542,15 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors
-                          .blue,
+                      color: Colors.blue,
                       shape: BoxShape.circle,
                     ),
-                    padding: EdgeInsets.all(
-                        8.0),
+                    padding: EdgeInsets.all(8.0),
                     child: GestureDetector(
                       onTap: () {
-
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => Categories()),
+                          MaterialPageRoute(builder: (context) => Categories()),
                         );
                       },
                       child: Icon(
@@ -552,7 +563,6 @@ class _HomePageState extends State<HomePage> {
                   )
                 ],
               ),
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -574,7 +584,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(
                                 width:
-                                8), // Adjust the spacing between the containers
+                                    8), // Adjust the spacing between the containers
                             Expanded(
                               child: Container(
                                 height: 100,
@@ -598,7 +608,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(
                                 width:
-                                8), // Adjust the spacing between the containers
+                                    8), // Adjust the spacing between the containers
                             Expanded(
                               child: Container(
                                 height: 100,
@@ -630,7 +640,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(
                                 width:
-                                8), // Adjust the spacing between the containers
+                                    8), // Adjust the spacing between the containers
                             Expanded(
                               child: Container(
                                 height: 100,
@@ -654,7 +664,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(
                                 width:
-                                8), // Adjust the spacing between the containers
+                                    8), // Adjust the spacing between the containers
                             Expanded(
                               child: Container(
                                 height: 100,
@@ -734,7 +744,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(
                                 width:
-                                8), // Adjust the spacing between the containers
+                                    8), // Adjust the spacing between the containers
                             Expanded(
                               child: Container(
                                 height: 100,
@@ -764,9 +774,7 @@ class _HomePageState extends State<HomePage> {
                                     fit: BoxFit.cover),
                               ),
                             ),
-                            SizedBox(
-                                width:
-                                8),
+                            SizedBox(width: 8),
                             Expanded(
                               child: Container(
                                 height: 100,
@@ -790,7 +798,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(
                                 width:
-                                8), // Adjust the spacing between the containers
+                                    8), // Adjust the spacing between the containers
                             Expanded(
                               child: Container(
                                 height: 100,
@@ -828,10 +836,11 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomBar(
+     bottomNavigationBar: BottomBar(
         onTap: (index) {
-          setState(() {});
+          // Handle bottom bar tap if necessary
         },
+        favoriteProducts: mostpopular.where((product) => product['isFavorite']).toList(),
       ),
     );
   }

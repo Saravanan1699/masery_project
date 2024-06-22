@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:masery_project/home.dart';
 import 'package:masery_project/viewcart.dart';
 
 import 'bottombar.dart';
@@ -36,10 +37,11 @@ class _CategoriesState extends State<Categories> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               child: IconButton(
-                icon: Icon(Icons.sort_sharp),
+                icon: Icon(Icons.arrow_back_ios_new_outlined,
+                  size: 15,),
                 onPressed: () {
                   setState(() {
-                    Scaffold.of(context).openDrawer();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
                   });
                 },
               ),
@@ -90,10 +92,10 @@ class _CategoriesState extends State<Categories> {
               decoration: InputDecoration(
                 hintText: 'Search any Product...',
                 prefixIcon: Icon(Icons.search, color: Color(0xffBBBBBB)),
-                suffixIcon: Icon(
-                  Icons.mic,
-                  color: Color(0xffBBBBBB),
-                ),
+                // suffixIcon: Icon(
+                //   Icons.mic,
+                //   color: Color(0xffBBBBBB),
+                // ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   borderSide: BorderSide.none,
@@ -120,6 +122,7 @@ class _CategoriesState extends State<Categories> {
                           ),
                         ),
                       ),
+                      Spacer(),
                       Card(
                         elevation: 4,
                         color: Colors.white,
@@ -158,6 +161,9 @@ class _CategoriesState extends State<Categories> {
                             ],
                           ),
                         ),
+                      ),
+                      SizedBox(
+                        width: 15,
                       )
                     ],
                   ),
@@ -561,7 +567,7 @@ class _CategoriesState extends State<Categories> {
       bottomNavigationBar: BottomBar(
         onTap: (index) {
           setState(() {});
-        },
+        }, favoriteProducts: [],
       ),
     );
 

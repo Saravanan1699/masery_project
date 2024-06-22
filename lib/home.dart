@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'Categories.dart';
+import 'Settings/My_Profile.dart';
 import 'bottombar.dart';
 
 import 'wishlist.dart';

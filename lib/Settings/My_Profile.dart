@@ -306,7 +306,7 @@ class _ProfileState extends State<Profile> {
       bottomNavigationBar: BottomBar(
         onTap: (index) {
           setState(() {});
-        },
+        }, favoriteProducts: [],
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'Categories.dart';
+import 'place_order.dart';
 import 'wishlist.dart';
 
 class BottomBar extends StatelessWidget {
@@ -21,7 +22,7 @@ class BottomBar extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
         BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
       ],
-      selectedItemColor: Colors.black, // For the selected icon and label
+      selectedItemColor: Colors.black,
       unselectedItemColor: Colors.black,
       onTap: (index) {
         onTap(index);
@@ -30,10 +31,15 @@ class BottomBar extends StatelessWidget {
             Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
             break;
           case 1:
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Wishlist(favoriteProducts: favoriteProducts)));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Wishlist(favoriteProducts: favoriteProducts),
+              ),
+            );
             break;
           case 2:
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Categories()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceOrder()));
             break;
           case 3:
             Navigator.push(context, MaterialPageRoute(builder: (context) => Categories()));

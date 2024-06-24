@@ -2,6 +2,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:masery_project/Address-deatils.dart';
 import 'Categories.dart';
+import 'Checkout.dart';
 import 'bottombar.dart';
 
 class cartview extends StatefulWidget {
@@ -92,7 +93,9 @@ class _cartviewState extends State<cartview> {
     List<String> imagePaths = getImagePaths();
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         centerTitle: true,
         title: Text('Masery'),
         leading: Builder(
@@ -309,7 +312,12 @@ class _cartviewState extends State<cartview> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => checkout()));
+                          },
                           child: Text(
                             'Add to cart',
                             style: TextStyle(
@@ -581,45 +589,53 @@ class _cartviewState extends State<cartview> {
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Container(
-                            width: 200,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 150,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(15.0)),
-                                    image: DecorationImage(
-                                      image:
-                                          AssetImage(products[index]['image']!),
-                                      fit: BoxFit.cover,
+                          child: Card(
+                            elevation: 4,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(15.0),
+                            ),
+                            child: Container(
+                              width: 200,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(15.0)),
+                                      image: DecorationImage(
+                                        image:
+                                            AssetImage(products[index]['image']!),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    products[index]['name']!,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.normal,
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      products[index]['name']!,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: Text(
-                                    products[index]['price']!,
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: Text(
+                                      products[index]['price']!,
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         );

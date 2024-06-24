@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../bottombar.dart';
+import '../home.dart';
+import 'Settings.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -20,13 +21,32 @@ class _ProfileState extends State<Profile> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: Icon(Icons.arrow_circle_left_outlined, color: Colors.black),
         title: Text('My Profile',
           style: GoogleFonts.raleway( // Using Google Fonts
             fontSize: screenWidth * 0.07, // Responsive font size
             fontWeight: FontWeight.w700,
             color: Color(0xFF2B2B2B),
           ),
+        ),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return Container(
+              margin: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Color(0xffF2F2F2),
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: IconButton(
+                icon: Icon(Icons.arrow_back_ios_new_outlined,
+                  size: 15,),
+                onPressed: () {
+                  setState(() {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                  });
+                },
+              ),
+            );
+          },
         ),
         actions: [
           IconButton(
@@ -285,10 +305,18 @@ class _ProfileState extends State<Profile> {
                       ),
                     ],
                   ),
-                  Icon(
-                    Icons.keyboard_arrow_right, // Replace with your desired icon
-                    size: screenWidth * 0.06, // Responsive icon size
-                    color: Color(0xFF9B9B9B),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Settings()),
+                      );
+                    },
+                    child: Icon(
+                      Icons.keyboard_arrow_right, // Replace with your desired icon
+                      size: screenWidth * 0.06, // Responsive icon size
+                      color: Color(0xFF9B9B9B),
+                    ),
                   ),
                 ],
               ),

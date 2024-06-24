@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'bottombar.dart';
+import 'package:masery_project/bottombar.dart';
+import 'home.dart';
 
 class Wishlist extends StatefulWidget {
   final List<Map<String, dynamic>> favoriteProducts;
+
   const Wishlist({super.key, required this.favoriteProducts});
 
   @override
@@ -16,16 +18,36 @@ class _WishlistState extends State<Wishlist> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Favorites'),
         centerTitle: true,
+        title: Text('Favorite'),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return Container(
+              margin: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Color(0xffF2F2F2),
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new_outlined,
+                  size: 15,
+                ),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                },
+              ),
+            );
+          },
+        ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.favorite_border_outlined),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(onPressed: () {}, icon: Icon(Icons.favorite_border_outlined)),
           ),
         ],
-        // leading: IconButton(onPressed: onPressed, icon: icon),
       ),
       body: widget.favoriteProducts.isEmpty
           ? Center(
@@ -57,17 +79,13 @@ class _WishlistState extends State<Wishlist> {
                         vertical: screenHeight * 0.02,
                         horizontal: screenWidth * 0.25,
                       ),
-                        shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12)
-    ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)
+                      ),
                     ),
-                    
                     child: Text(
                       'Start Shopping',
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.045,
-                        color: Colors.white
-                      ),
+                      style: TextStyle(fontSize: screenWidth * 0.045, color: Colors.white),
                     ),
                   ),
                 ],
@@ -86,42 +104,56 @@ class _WishlistState extends State<Wishlist> {
                 final product = widget.favoriteProducts[index];
                 return Container(
                   padding: EdgeInsets.all(screenWidth * 0.02),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                            size: screenWidth * 0.05,
-                          ),
-                          SizedBox(width: screenWidth * 0.02),
-                          Expanded(
-                            child: Image.asset(
-                              product['image'],
-                              width: screenWidth * 0.3,
-                              height: screenHeight * 0.15,
+                  child: Card(
+                    elevation: 4,
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.favorite,
+                                color: Colors.red,
+                                size: screenWidth * 0.05,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  product['isFavorite'] = !product['isFavorite'];
+                                  if (!product['isFavorite']) {
+                                    widget.favoriteProducts.removeAt(index);
+                                  }
+                                });
+                              },
                             ),
+                            SizedBox(width: screenWidth * 0.02),
+                            Expanded(
+                              child: Image.asset(
+                                product['image'],
+                                width: screenWidth * 0.3,
+                                height: screenHeight * 0.15,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: screenHeight * 0.01),
+                        Text(
+                          product['name'],
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
-                      SizedBox(height: screenHeight * 0.01),
-                      Text(
-                        product['name'],
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.04,
-                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      SizedBox(height: screenHeight * 0.01),
-                      Text(
-                        product['price'],
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.035,
-                          fontWeight: FontWeight.bold,
+                        SizedBox(height: screenHeight * 0.01),
+                        Text(
+                          product['price'],
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.035,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },

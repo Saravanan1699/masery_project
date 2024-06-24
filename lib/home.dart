@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  FocusNode _focusNode = FocusNode();
   List<String> getImagePaths() {
     return [
       'assets/Graphics.png',
@@ -69,53 +70,52 @@ class _HomePageState extends State<HomePage> {
       },
     ];
   }
+
   List<Map<String, dynamic>> mostpopular = [
-     {
-        'image': 'assets/mp_1.png',
-        'name': 'Graphics Card',
-        'price': '\$300',
-        'isFavorite': false,
-      },
-      {
-        'image': 'assets/mp_2.png',
-        'name': 'Mobile Phone',
-        'price': '\$700',
-        'isFavorite': false,
-      },
-      {
-        'image': 'assets/mp_2.png',
-        'name': 'Mobile Phone',
-        'price': '\$700',
-        'isFavorite': false,
-      },
-      {
-        'image': 'assets/mp_3.png',
-        'name': 'SSD',
-        'price': '\$120',
-        'isFavorite': false,
-      },
-      {
-        'image': 'assets/mp_4.png',
-        'name': 'Electronics',
-        'price': '\$450',
-        'isFavorite': false,
-      },
-      {
-        'image': 'assets/mp_5.png',
-        'name': 'Accessories',
-        'price': '\$80',
-        'isFavorite': false,
-      },
-      {
-        'image': 'assets/mp_5.png',
-        'name': 'Accessories',
-        'price': '\$80',
-        'isFavorite': false,
-      },
-    
+    {
+      'image': 'assets/mp_1.png',
+      'name': 'Graphics Card',
+      'price': '\$300',
+      'isFavorite': false,
+    },
+    {
+      'image': 'assets/mp_2.png',
+      'name': 'Mobile Phone',
+      'price': '\$700',
+      'isFavorite': false,
+    },
+    {
+      'image': 'assets/mp_2.png',
+      'name': 'Mobile Phone',
+      'price': '\$700',
+      'isFavorite': false,
+    },
+    {
+      'image': 'assets/mp_3.png',
+      'name': 'SSD',
+      'price': '\$120',
+      'isFavorite': false,
+    },
+    {
+      'image': 'assets/mp_4.png',
+      'name': 'Electronics',
+      'price': '\$450',
+      'isFavorite': false,
+    },
+    {
+      'image': 'assets/mp_5.png',
+      'name': 'Accessories',
+      'price': '\$80',
+      'isFavorite': false,
+    },
+    {
+      'image': 'assets/mp_5.png',
+      'name': 'Accessories',
+      'price': '\$80',
+      'isFavorite': false,
+    },
   ];
 
- 
   final List<List<String>> category = [
     [
       'assets/laptop.png',
@@ -159,19 +159,20 @@ class _HomePageState extends State<HomePage> {
     List<String> imagePaths = getImagePaths();
     List<String> backgroundImages = getBackgroundImages();
     List<Map<String, String>> products = getProducts();
-    
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Center(child: Text('Masery Shop')),
-     actions: [
+        actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Profile()), // Ensure the correct page to navigate
+                  MaterialPageRoute(builder: (context) => Profile()),
                 );
               },
               child: CircleAvatar(
@@ -210,240 +211,290 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 50,
-                      child: TextFormField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Search...',
-                          prefixIcon:
-                              Icon(Icons.search, color: Color(0xffBBBBBB)),
-                          suffixIcon: Icon(
-                            Icons.mic,
-                            color: Color(0xffBBBBBB),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              focusNode: _focusNode,
+              decoration: InputDecoration(
+                hintText: 'Search any Product...',
+                prefixIcon: Icon(Icons.search, color: Color(0xffBBBBBB)),
+                // suffixIcon: Icon(
+                //   Icons.mic,
+                //   color: Color(0xffBBBBBB),
+                // ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Color(0xffF2F2F2),
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: Container(
+                    //         height: 50,
+                    //         child: TextFormField(
+                    //           controller: _searchController,
+                    //           decoration: InputDecoration(
+                    //             hintText: 'Search...',
+                    //             prefixIcon:
+                    //                 Icon(Icons.search, color: Color(0xffBBBBBB)),
+                    //             suffixIcon: Icon(
+                    //               Icons.mic,
+                    //               color: Color(0xffBBBBBB),
+                    //             ),
+                    //             border: OutlineInputBorder(
+                    //               borderRadius: BorderRadius.circular(10),
+                    //             ),
+                    //             filled: true,
+                    //             fillColor: Colors.white,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 15,
+                            color: Color(0xff828282),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                          SizedBox(
+                            width: 5,
                           ),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        autofocus: true,
+                          Text(
+                            'Delivary to  Mari - Chennai 600118 ',
+                            style: TextStyle(
+                                color: Color(0xff828282), fontSize: 12),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Icon(Icons.keyboard_arrow_down_outlined,
+                              size: 15, color: Color(0xff828282)),
+                        ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                color: Colors.pink[50],
-                height: 90,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 6,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            // fit: BoxFit.cover,
-                            image: AssetImage(imagePaths[index]),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Container(
-                height: 200,
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: backgroundImages.length,
-                  onPageChanged: (int page) {
-                    setState(() {
-                      _currentPage = page.toDouble();
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Card(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0),
-                            image: DecorationImage(
-                              image: AssetImage(backgroundImages[index]),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              SizedBox(height: 10),
-              DotsIndicator(
-                dotsCount: imagePaths.length,
-                position: _currentPage,
-                decorator: DotsDecorator(
-                  color: Colors.grey,
-                  activeColor: Colors.blue,
-                  size: const Size.square(8.0),
-                  activeSize: const Size.square(10.0),
-                  spacing: const EdgeInsets.symmetric(horizontal: 5.0),
-                  activeShape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0)),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Text(
-                    'New Item',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                    SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  Spacer(),
-                  Text(
-                    'See All',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      shape: BoxShape.circle,
-                    ),
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.arrow_forward,
-                      size: 25,
-                      color: Colors
-                          .white, // Ensure the icon is visible against the blue background
-                    ),
-                  )
-                ],
-              ),
-              Container(
-                height: 300,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 200,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 150,
+                    Container(
+                      color: Colors.white,
+                      height: 90,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 6,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Container(
+                              width: 60,
+                              height: 60,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(15.0)),
+                                color: Colors.grey[100],
+                                shape: BoxShape.circle,
                                 image: DecorationImage(
-                                  image: AssetImage(products[index]['image']!),
-                                  fit: BoxFit.cover,
+                                  // fit: BoxFit.cover,
+                                  image: AssetImage(imagePaths[index]),
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                products[index]['name']!,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                products[index]['price']!,
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Most Popular',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
                     ),
-                  ),
-                  Spacer(),
-                  Text(
-                    'See All',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors
-                          .blue, // Set the background color of the container
-                      shape: BoxShape.circle, // Make the container circular
+                    Container(
+                      height: 200,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: backgroundImages.length,
+                        onPageChanged: (int page) {
+                          setState(() {
+                            _currentPage = page.toDouble();
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Card(
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  image: DecorationImage(
+                                    image: AssetImage(backgroundImages[index]),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                    padding: EdgeInsets.all(
-                        8.0), // Adjust the padding to control the size of the circle
-                    child: Icon(
-                      Icons.arrow_forward,
-                      size: 25,
-                      color: Colors
-                          .white, // Ensure the icon is visible against the blue background
+                    SizedBox(height: 10),
+                    DotsIndicator(
+                      dotsCount: imagePaths.length,
+                      position: _currentPage,
+                      decorator: DotsDecorator(
+                        color: Colors.grey,
+                        activeColor: Colors.blue,
+                        size: const Size.square(8.0),
+                        activeSize: const Size.square(10.0),
+                        spacing: const EdgeInsets.symmetric(horizontal: 5.0),
+                        activeShape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                      ),
                     ),
-                  )
-                ],
-              ),
-     Container(
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'New Item',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Spacer(),
+                        Text(
+                          'See All',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.arrow_forward,
+                            size: 25,
+                            color: Colors
+                                .white, // Ensure the icon is visible against the blue background
+                          ),
+                        )
+                      ],
+                    ),
+                    Container(
+                      height: 300,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Container(
+                              width: 200,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(15.0)),
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            products[index]['image']!),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      products[index]['name']!,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: Text(
+                                      products[index]['price']!,
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Most Popular',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Spacer(),
+                        Text(
+                          'See All',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors
+                                .blue, // Set the background color of the container
+                            shape:
+                                BoxShape.circle, // Make the container circular
+                          ),
+                          padding: EdgeInsets.all(
+                              8.0), // Adjust the padding to control the size of the circle
+                          child: Icon(
+                            Icons.arrow_forward,
+                            size: 25,
+                            color: Colors
+                                .white, // Ensure the icon is visible against the blue background
+                          ),
+                        )
+                      ],
+                    ),
+                      Container(
         height: 150,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -520,328 +571,446 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
-      
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Categories',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+     
+                    SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  Spacer(),
-                  Text(
-                    'See All',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      shape: BoxShape.circle,
+                    Row(
+                      children: [
+                        Text(
+                          'Categories',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Spacer(),
+                        Text(
+                          'See All',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          padding: EdgeInsets.all(8.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Categories()),
+                              );
+                            },
+                            child: Icon(
+                              Icons.arrow_forward,
+                              size: 25,
+                              color: Colors
+                                  .white, // Ensure the icon is visible against the blue background
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    padding: EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Categories()),
-                        );
-                      },
-                      child: Icon(
-                        Icons.arrow_forward,
-                        size: 25,
-                        color: Colors
-                            .white, // Ensure the icon is visible against the blue background
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Left Column
-                  Expanded(
-                    child: Column(
+
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Upper Row in Left Column
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop.png',
-                                    fit: BoxFit.cover),
+                        // Left Column
+                        Expanded(
+                          child: Card(
+                            elevation: 4,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Upper Row in Left Column
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/laptop.png',
+                                              fit: BoxFit.contain),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width:
+                                              8), // Adjust the spacing between the containers
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/laptop_1.png',
+                                              fit: BoxFit.contain),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/laptop_2.png',
+                                              fit: BoxFit.contain),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width:
+                                              8), // Adjust the spacing between the containers
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/laptop_1.png',
+                                              fit: BoxFit.contain),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Laptops',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        height: 30,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xffF2F2F2),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '108',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      )
+                                    ],
+                                  )
+                                ],
                               ),
                             ),
-                            SizedBox(
-                                width:
-                                    8), // Adjust the spacing between the containers
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop_1.png',
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
 
-                        // Lower Row in Left Column
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop_2.png',
-                                    fit: BoxFit.cover),
+                        SizedBox(
+                            width:
+                                15), // Adjust the spacing between the columns
+                        // Right Column
+                        Expanded(
+                          child: Card(
+                            elevation: 4,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Upper Row in Right Column
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/laptop_1.png',
+                                              fit: BoxFit.cover),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width:
+                                              8), // Adjust the spacing between the containers
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/laptop_1.png',
+                                              fit: BoxFit.cover),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                            
+                                  // Lower Row in Right Column
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/laptop_1.png',
+                                              fit: BoxFit.cover),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width:
+                                              8), // Adjust the spacing between the containers
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/laptop_2.png',
+                                              fit: BoxFit.cover),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Accessories',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        height: 30,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xffF2F2F2),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '530',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      )
+                                    ],
+                                  )
+                                ],
                               ),
                             ),
-                            SizedBox(
-                                width:
-                                    8), // Adjust the spacing between the containers
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop_1.png',
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(width: 15), // Adjust the spacing between the columns
-                  // Right Column
-                  Expanded(
-                    child: Column(
+
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Upper Row in Right Column
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop_1.png',
-                                    fit: BoxFit.cover),
+                        // Left Column
+                        Expanded(
+                          child: Card(
+                            elevation: 4,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Upper Row in Left Column
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/mp_3.png',
+                                              fit: BoxFit.contain),
+                                        ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/ssd_4.png',
+                                              fit: BoxFit.contain),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                            
+                                  // Lower Row in Left Column
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/ssd_1.png',
+                                              fit: BoxFit.contain),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width:
+                                              8), // Adjust the spacing between the containers
+                                      Expanded(
+                                        child: Container(
+                                          height: 100,
+                                          child: Image.asset(
+                                              'assets/ssd_4.png',
+                                              fit: BoxFit.contain),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    'Ssd & Rom',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                                width:
-                                    8), // Adjust the spacing between the containers
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop_1.png',
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
+                        SizedBox(width: 15),
+                        // Right Column
+                        Expanded(
+                          child: Card(
+                            elevation: 4,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Container(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Upper Row in Right Column
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            height: 100,
+                                            child: Image.asset(
+                                                'assets/mp_4.png',
+                                                fit: BoxFit.cover),
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Expanded(
+                                          child: Container(
+                                            height: 100,
+                                            child: Image.asset(
+                                                'assets/laptop_1.png',
+                                                fit: BoxFit.cover),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
 
-                        // Lower Row in Right Column
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop_1.png',
-                                    fit: BoxFit.cover),
+                                    // Lower Row in Right Column
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            height: 100,
+                                            child: Image.asset(
+                                                'assets/laptop_1.png',
+                                                fit: BoxFit.cover),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                            width:
+                                                8), // Adjust the spacing between the containers
+                                        Expanded(
+                                          child: Container(
+                                            height: 100,
+                                            child: Image.asset(
+                                                'assets/laptop_2.png',
+                                                fit: BoxFit.cover),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      'Graphics Card',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            SizedBox(
-                                width:
-                                    8), // Adjust the spacing between the containers
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop_2.png',
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                 
+                  ],
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    'Laptop',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'Accessories',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Left Column
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Upper Row in Left Column
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/mp_3.png',
-                                    fit: BoxFit.contain),
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/ssd_4.png',
-                                    fit: BoxFit.contain),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // Lower Row in Left Column
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/ssd_1.png',
-                                    fit: BoxFit.contain),
-                              ),
-                            ),
-                            SizedBox(
-                                width:
-                                    8), // Adjust the spacing between the containers
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/ssd_4.png',
-                                    fit: BoxFit.contain),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 15),
-                  // Right Column
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Upper Row in Right Column
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/mp_4.png',
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop_1.png',
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // Lower Row in Right Column
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop_1.png',
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                            SizedBox(
-                                width:
-                                    8), // Adjust the spacing between the containers
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                child: Image.asset('assets/laptop_2.png',
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    'Ssd & Rom',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'Graphics Card',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              )
-            ],
+            ),
           ),
-        ),
+        ],
       ),
-     bottomNavigationBar: BottomBar(
+      bottomNavigationBar: BottomBar(
         onTap: (index) {
           // Handle bottom bar tap if necessary
         },
-        favoriteProducts: mostpopular.where((product) => product['isFavorite']).toList(),
+        favoriteProducts:
+            mostpopular.where((product) => product['isFavorite']).toList(),
       ),
     );
   }

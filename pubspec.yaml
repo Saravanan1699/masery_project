@@ -65,6 +65,8 @@ flutter:
   assets:
     - assets/
     - assets/lenovo-lap.jpg
+    - assets/shopping_laptop.png
+    - assets/icon _coupon.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

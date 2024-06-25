@@ -22,7 +22,26 @@ class _SignUpState extends State<SignUp> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: Icon(Icons.arrow_circle_left_outlined, color: Colors.black),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return Container(
+              margin: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Color(0xffF2F2F2),
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: IconButton(
+                icon: Icon(Icons.arrow_back_ios_new_outlined,
+                  size: 15,),
+                onPressed: () {
+                  setState(() {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Signin()));
+                  });
+                },
+              ),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05), // 5% of screen width padding

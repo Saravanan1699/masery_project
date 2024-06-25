@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:masery_project/Authentication/startscreen.dart';
 import '../home.dart';
 import 'Sign_up.dart';
 
@@ -24,8 +25,8 @@ class _SigninState extends State<Signin> {
       resizeToAvoidBottomInset: true, // Allow bottom inset to avoid keyboard
       backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
-        leading: Icon(Icons.arrow_circle_left_outlined, color: Colors.black),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05), // 5% of screen width padding
@@ -209,8 +210,8 @@ class _SigninState extends State<Signin> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFF7F7F9), // Button background color
                   padding: EdgeInsets.symmetric(
-                    vertical: 15,
-                    horizontal: screenWidth * 0.15,
+                    vertical: 12,
+                    horizontal: screenWidth * 0.18,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0), // Curved border with 12.0 radius

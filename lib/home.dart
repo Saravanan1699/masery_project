@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'Categories.dart';
 import 'Settings/My_Profile.dart';
 import 'bottombar.dart';
 
+import 'categories_homepage.dart';
 import 'wishlist.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,16 +28,13 @@ class _HomePageState extends State<HomePage> {
       'assets/another_image.png', // Add more paths if needed
     ];
   }
-
-  List<String> getBackgroundImages() {
-    return [
-      'assets/offerimage.png',
-      'assets/offerimage.png',
-      'assets/offerimage.png',
-      'assets/offerimage.png',
-      'assets/offerimage.png',
-    ];
-  }
+ final List<String> backgroundImages = [
+    'assets/Colorful.png',
+    'assets/laptop_image.png',
+    'assets/offerlap.png',
+    'assets/offerlaptop.png',
+    'assets/offerslap.png',
+  ];
 
   List<Map<String, String>> getProducts() {
     return [
@@ -153,11 +153,38 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   PageController _pageController = PageController();
   double _currentPage = 0;
+   late Timer _timer;
+    @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
+      if (_pageController.page == backgroundImages.length - 1) {
+        _pageController.animateToPage(
+          0,
+          duration: Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      } else {
+        _pageController.nextPage(
+          duration: Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     List<String> imagePaths = getImagePaths();
-    List<String> backgroundImages = getBackgroundImages();
+    
     List<Map<String, String>> products = getProducts();
 
     return Scaffold(
@@ -311,8 +338,13 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.grey[100],
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
+                                  
                                   // fit: BoxFit.cover,
-                                  image: AssetImage(imagePaths[index]),
+                                  image: AssetImage(
+                                    
+                                    imagePaths[
+                                    
+                                      index]),
                                 ),
                               ),
                             ),
@@ -320,7 +352,7 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ),
-                    Container(
+                     Container(
                       height: 200,
                       child: PageView.builder(
                         controller: _pageController,
@@ -354,7 +386,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 10),
                     DotsIndicator(
-                      dotsCount: imagePaths.length,
+                      dotsCount: backgroundImages.length,
                       position: _currentPage,
                       decorator: DotsDecorator(
                         color: Colors.grey,
@@ -363,9 +395,11 @@ class _HomePageState extends State<HomePage> {
                         activeSize: const Size.square(10.0),
                         spacing: const EdgeInsets.symmetric(horizontal: 5.0),
                         activeShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
                       ),
                     ),
+                   
                     SizedBox(
                       height: 10,
                     ),
@@ -604,7 +638,7 @@ class _HomePageState extends State<HomePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Categories()),
+                                    builder: (context) => CategoriesHomepage()),
                               );
                             },
                             child: Icon(

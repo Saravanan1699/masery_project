@@ -1,9 +1,11 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:masery_project/Address-deatils.dart';
+import '../Multiple_stepform/step_form.dart';
 import 'Categories.dart';
-import 'Checkout.dart';
-import 'bottombar.dart';
+import '../Checkout.dart';
+import '../bottombar.dart';
 
 class cartview extends StatefulWidget {
   const cartview({super.key});
@@ -91,13 +93,19 @@ class _cartviewState extends State<cartview> {
     List<Map<String, String>> products = getProducts();
     List<String> backgroundImages = getBackgroundImages();
     List<String> imagePaths = getImagePaths();
-
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text('Masery'),
+        title: Text('Description',
+          style: GoogleFonts.raleway(
+            fontSize: screenWidth * 0.05, // Slightly smaller font size for the description
+            fontWeight: FontWeight.w700, // Regular weight for the description
+            color: Color(0xFF2B2B2B),
+          ),
+        ),
         leading: Builder(
           builder: (BuildContext context) {
             return Container(
@@ -129,31 +137,6 @@ class _cartviewState extends State<cartview> {
             ),
           ),
         ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Drawer Header'),
-              decoration: BoxDecoration(
-                color: Color(0xffF2F2F2),
-              ),
-            ),
-            ListTile(
-              title: Text('Item 1'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text('Item 2'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
       ),
       body: Column(
         children: [
@@ -340,7 +323,7 @@ class _cartviewState extends State<cartview> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Addressdeatils()));
+                                    builder: (context) => MultistepForm()));
                           },
                           child: Text(
                             'Buy Now',

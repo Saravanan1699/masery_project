@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'Categories.dart';
+import 'Categorys_pages/Categories.dart';
 import 'home.dart';
 
 class Addressdeatils extends StatefulWidget {

@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'Categories.dart';
+import 'Categorys_pages/Categories.dart';
 import 'Settings/My_Profile.dart';
 import 'bottombar.dart';
 
-import 'categories_homepage.dart';
+import 'Categorys_pages/categories_homepage.dart';
 import 'wishlist.dart';
 
 class HomePage extends StatefulWidget {

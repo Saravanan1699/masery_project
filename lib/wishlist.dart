@@ -21,6 +21,7 @@ class _WishlistState extends State<Wishlist> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
+        backgroundColor: Colors.white,
         title: Text('Favorite'),
         leading: Builder(
           builder: (BuildContext context) {

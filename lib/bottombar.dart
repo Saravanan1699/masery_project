@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
-import 'Categories.dart';
+import 'Categorys_pages/Categories.dart';
 import 'place_order.dart';
 import 'wishlist.dart';
 

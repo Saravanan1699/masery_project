@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:masery_project/shopping.dart';
-import 'Categories.dart';
+import 'Categorys_pages/Categories.dart';
 
 class checkout extends StatefulWidget {
   const checkout({super.key});

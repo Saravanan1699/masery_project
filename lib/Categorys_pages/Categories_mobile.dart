@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:masery_project/home.dart';
-import 'package:masery_project/viewcart.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:masery_project/Categorys_pages/view_mobile_cart.dart';
+import '../bottombar.dart';
+import 'categories_homepage.dart';
 
-import 'bottombar.dart';
-
-class Categories extends StatefulWidget {
-  const Categories({super.key});
+class Categories_mobile extends StatefulWidget {
+  const Categories_mobile({super.key});
 
   @override
-  State<Categories> createState() => _CategoriesState();
+  State<Categories_mobile> createState() => _Categories_mobileState();
 }
 
-class _CategoriesState extends State<Categories> {
+class _Categories_mobileState extends State<Categories_mobile> {
   TextEditingController _searchController = TextEditingController();
   FocusNode _focusNode = FocusNode();
 
@@ -24,12 +25,26 @@ class _CategoriesState extends State<Categories> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    TextStyle commonTextStyle = GoogleFonts.montserrat(
+      fontSize: screenWidth * 0.04,
+      fontWeight: FontWeight.w600,
+      color: Color(0xFF2B2B2B),
+    );
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text('Masery'),
+        title: Text('Mobiles',
+          style: GoogleFonts.raleway(
+            fontSize: screenWidth * 0.05, // Slightly smaller font size for the description
+            fontWeight: FontWeight.w700, // Regular weight for the description
+            color: Color(0xFF2B2B2B),
+          ),),
         leading: Builder(
           builder: (BuildContext context) {
             return Container(
@@ -43,46 +58,27 @@ class _CategoriesState extends State<Categories> {
                   size: 15,),
                 onPressed: () {
                   setState(() {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CategoriesHomepage()));
                   });
                 },
               ),
             );
           },
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundImage: AssetImage('assets/avatar.png'),
-            ),
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Drawer Header'),
-              decoration: BoxDecoration(
-                color: Color(0xffF2F2F2),
-              ),
-            ),
-            ListTile(
-              title: Text('Item 1'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text('Item 2'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
+        // actions: [
+        //   Padding(
+        //     padding: EdgeInsets.all(8.0),
+        //     child: Container(
+        //       width: 40,
+        //       height: 40,
+        //       decoration: BoxDecoration(
+        //         color: Colors.blue,
+        //         borderRadius: BorderRadius.circular(10),
+        //       ),
+        //       child: Icon(Icons.shopping_cart, color: Colors.white),
+        //     ),
+        //   ),
+        // ],
       ),
       body: Column(
         children: [
@@ -180,7 +176,7 @@ class _CategoriesState extends State<Categories> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    cartview(),
+                                    Mobile_View(),
                               ),
                             );
                           },
@@ -191,16 +187,18 @@ class _CategoriesState extends State<Categories> {
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: SizedBox(
-                              height: 275.0,
+                              height: 290.0,
                               width: 165.0,
                               child: Column(
+
                                 children: [
+                                  SizedBox(height: screenHeight * 0.01),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Image(image:  AssetImage('assets/top.png'),
-                                      height: 150,
-                                      width: 150,)
+                                      Image(image:  AssetImage('assets/Mobile_1.png'),
+                                        height: 150,
+                                        width: 150,)
                                     ],
                                   ),
                                   Padding(
@@ -208,17 +206,37 @@ class _CategoriesState extends State<Categories> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text('ASUS TUF',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold
+                                        Text(
+                                          'iQOO Z7 Pro 5G',
+                                          style: commonTextStyle,
                                         ),
+                                        Text(
+                                          '(Blue Lagoon, 8GB RAM, 256GB Storage) | 3D Curved AMOLED Display',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: screenWidth * 0.03, // Slightly smaller font size for the description
+                                            fontWeight: FontWeight.w400, // Regular weight for the description
+                                            color: Color(0xFF2B2B2B),
+                                          ),
                                         ),
-                                        Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...'),
-                                        Text('₹45000',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                          fontSize: 12)
-                                        )
+                                        Text(
+                                          '₹23998',
+                                          style: commonTextStyle,
+                                        ),
+                                        RatingBar.builder(
+                                          initialRating: 4.5,
+                                          minRating: 1,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemSize: 20.0,
+                                          itemBuilder: (context, _) => Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                          ),
+                                          onRatingUpdate: (rating) {
+                                            print(rating);
+                                          },
+                                        ),
                                       ],
                                     ),
                                   )
@@ -237,14 +255,15 @@ class _CategoriesState extends State<Categories> {
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: SizedBox(
-                            height: 275.0,
+                            height: 290.0,
                             width: 165.0,
                             child: Column(
                               children: [
+                                SizedBox(height: screenHeight * 0.01),
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Image(image:  AssetImage('assets/lap.png'),
+                                    Image(image:  AssetImage('assets/Mobile_2.png'),
                                       height: 150,
                                       width: 150,)
                                   ],
@@ -254,17 +273,34 @@ class _CategoriesState extends State<Categories> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('ASUS TUF',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold
+                                      Text('OnePlus 11R 5G',
+                                        style: commonTextStyle,
+                                      ),
+                                      Text('(Solar Red, 8GB RAM, 128GB Storage)',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: screenWidth * 0.03, // Slightly smaller font size for the description
+                                          fontWeight: FontWeight.w400, // Regular weight for the description
+                                          color: Color(0xFF2B2B2B),
                                         ),
                                       ),
-                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...'),
-                                      Text('₹45000',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12)
-                                      )
+                                      Text('₹30999',
+                                        style: commonTextStyle,
+                                      ),
+                                      RatingBar.builder(
+                                        initialRating: 4.5,
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemSize: 20.0,
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        onRatingUpdate: (rating) {
+                                          print(rating);
+                                        },
+                                      ),
                                     ],
                                   ),
                                 )
@@ -287,10 +323,142 @@ class _CategoriesState extends State<Categories> {
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: SizedBox(
-                            height: 275.0,
+                            height: 290.0,
                             width: 165.0,
                             child: Column(
                               children: [
+                                SizedBox(height: screenHeight * 0.01),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(image:  AssetImage('assets/Mobile_3.png'),
+                                      height: 150,
+                                      width: 150,)
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Apple iPhone 15',
+                                        style: commonTextStyle,
+                                      ),
+                                      Text('Pink, iOS, 128GB Storage',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: screenWidth * 0.03, // Slightly smaller font size for the description
+                                          fontWeight: FontWeight.w400, // Regular weight for the description
+                                          color: Color(0xFF2B2B2B),
+                                        ),
+                                      ),
+                                      Text('₹71999',
+                                        style: commonTextStyle,
+                                      ),
+                                      RatingBar.builder(
+                                        initialRating: 4.5,
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemSize: 20.0,
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        onRatingUpdate: (rating) {
+                                          print(rating);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Card(
+                          color: Colors.white,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: SizedBox(
+                            height: 290.0,
+                            width: 165.0,
+                            child: Column(
+                              children: [
+                                SizedBox(height: screenHeight * 0.01),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(image:  AssetImage('assets/Mobile_4.png'),
+                                      height: 150,
+                                      width: 150,)
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Redmi 13C 5G',
+                                        style: commonTextStyle,
+                                      ),
+                                      Text('(Starlight Black, 4GB RAM, 128GB Storage)',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: screenWidth * 0.03, // Slightly smaller font size for the description
+                                          fontWeight: FontWeight.w400, // Regular weight for the description
+                                          color: Color(0xFF2B2B2B),
+                                        ),
+                                      ),
+                                      Text('₹10499',
+                                        style: commonTextStyle,
+                                      ),
+                                      RatingBar.builder(
+                                        initialRating: 4.5,
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemSize: 20.0,
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        onRatingUpdate: (rating) {
+                                          print(rating);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Card(
+                          color: Colors.white,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: SizedBox(
+                            height: 290.0,
+                            width: 165.0,
+                            child: Column(
+                              children: [
+                                SizedBox(height: screenHeight * 0.01),
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -305,16 +473,33 @@ class _CategoriesState extends State<Categories> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('ASUS TUF',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold
+                                        style: commonTextStyle,
+                                      ),
+                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: screenWidth * 0.03, // Slightly smaller font size for the description
+                                          fontWeight: FontWeight.w400, // Regular weight for the description
+                                          color: Color(0xFF2B2B2B),
                                         ),
                                       ),
-                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...'),
                                       Text('₹45000',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12)
-                                      )
+                                        style: commonTextStyle,
+                                      ),
+                                      RatingBar.builder(
+                                        initialRating: 4.5,
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemSize: 20.0,
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        onRatingUpdate: (rating) {
+                                          print(rating);
+                                        },
+                                      ),
                                     ],
                                   ),
                                 )
@@ -350,16 +535,33 @@ class _CategoriesState extends State<Categories> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('ASUS TUF',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold
+                                        style: commonTextStyle,
+                                      ),
+                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: screenWidth * 0.03, // Slightly smaller font size for the description
+                                          fontWeight: FontWeight.w400, // Regular weight for the description
+                                          color: Color(0xFF2B2B2B),
                                         ),
                                       ),
-                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...'),
                                       Text('₹45000',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12)
-                                      )
+                                        style: commonTextStyle,
+                                      ),
+                                      RatingBar.builder(
+                                        initialRating: 4.5,
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemSize: 20.0,
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        onRatingUpdate: (rating) {
+                                          print(rating);
+                                        },
+                                      ),
                                     ],
                                   ),
                                 )
@@ -382,10 +584,11 @@ class _CategoriesState extends State<Categories> {
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: SizedBox(
-                            height: 275.0,
+                            height: 290.0,
                             width: 165.0,
                             child: Column(
                               children: [
+                                SizedBox(height: screenHeight * 0.01),
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -400,16 +603,33 @@ class _CategoriesState extends State<Categories> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('ASUS TUF',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold
+                                        style: commonTextStyle,
+                                      ),
+                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: screenWidth * 0.03, // Slightly smaller font size for the description
+                                          fontWeight: FontWeight.w400, // Regular weight for the description
+                                          color: Color(0xFF2B2B2B),
                                         ),
                                       ),
-                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...'),
                                       Text('₹45000',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12)
-                                      )
+                                        style: commonTextStyle,
+                                      ),
+                                      RatingBar.builder(
+                                        initialRating: 4.5,
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemSize: 20.0,
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        onRatingUpdate: (rating) {
+                                          print(rating);
+                                        },
+                                      ),
                                     ],
                                   ),
                                 )
@@ -445,111 +665,33 @@ class _CategoriesState extends State<Categories> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('ASUS TUF',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold
+                                        style: commonTextStyle,
+                                      ),
+                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: screenWidth * 0.03, // Slightly smaller font size for the description
+                                          fontWeight: FontWeight.w400, // Regular weight for the description
+                                          color: Color(0xFF2B2B2B),
                                         ),
                                       ),
-                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...'),
                                       Text('₹45000',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12)
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Card(
-                          color: Colors.white,
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: SizedBox(
-                            height: 275.0,
-                            width: 165.0,
-                            child: Column(
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image(image:  AssetImage('assets/top.png'),
-                                      height: 150,
-                                      width: 150,)
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text('ASUS TUF',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold
-                                        ),
+                                        style: commonTextStyle,
                                       ),
-                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...'),
-                                      Text('₹45000',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12)
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Card(
-                          color: Colors.white,
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: SizedBox(
-                            height: 275.0,
-                            width: 165.0,
-                            child: Column(
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image(image:  AssetImage('assets/lap.png'),
-                                      height: 150,
-                                      width: 150,)
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text('ASUS TUF',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold
+                                      RatingBar.builder(
+                                        initialRating: 4.5,
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemSize: 20.0,
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
                                         ),
+                                        onRatingUpdate: (rating) {
+                                          print(rating);
+                                        },
                                       ),
-                                      Text('Intel Core i5-11400H 11th Gen,15.6-inch (39.62 cm) ...'),
-                                      Text('₹45000',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12)
-                                      )
                                     ],
                                   ),
                                 )

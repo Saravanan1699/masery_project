@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'Cart.dart';
 import 'home.dart';
 import 'Categorys_pages/Categories.dart';
 import 'place_order.dart';
@@ -39,7 +40,7 @@ class BottomBar extends StatelessWidget {
             );
             break;
           case 2:
-            Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceOrder()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Cart(favoriteProducts: favoriteProducts,)));
             break;
           case 3:
             Navigator.push(context, MaterialPageRoute(builder: (context) => Categories()));

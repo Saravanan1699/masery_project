@@ -204,7 +204,7 @@ class _CategoriesState extends State<Categories> {
                                           style: commonTextStyle,
                                         ),
                                         Text(
-                                          '(Blue Lagoon, 8GB RAM, 256GB Storage) | 3D Curved AMOLED Display',
+                                          '(Blue Lagoon, 8GB RAM, 256GB Storage) ',
                                           style: GoogleFonts.montserrat(
                                             fontSize: screenWidth * 0.03, // Slightly smaller font size for the description
                                             fontWeight: FontWeight.w400, // Regular weight for the description
@@ -481,7 +481,7 @@ class _CategoriesState extends State<Categories> {
                                           style: commonTextStyle,
                                         ),
                                         Text(
-                                          '(Blue Lagoon, 8GB RAM, 256GB Storage) | 3D Curved AMOLED Display',
+                                          '(Blue Lagoon, 8GB RAM, 256GB Storage)',
                                           style: GoogleFonts.montserrat(
                                             fontSize: screenWidth * 0.03, // Slightly smaller font size for the description
                                             fontWeight: FontWeight.w400, // Regular weight for the description

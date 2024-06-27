@@ -92,6 +92,13 @@ class _CategoriesHomepageState extends State<CategoriesHomepage> {
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryDetailPage()));
               },
             ),
+            CategoryCard(
+              image: Image.asset('assets/Motherboard.png'), // Replace with your image path
+              label: 'Motherboard',
+              onTap: () {
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryDetailPage()));
+              },
+            ),
           ],
         ),
       )

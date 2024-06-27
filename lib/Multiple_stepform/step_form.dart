@@ -498,7 +498,7 @@ class _MultistepFormState extends State<MultistepForm> {
                   ),
                   child: SizedBox(
                     height: 95,
-                    width: 90,
+                    width: 75,
                     child: Center(
                       child: Column(
                         children: [
@@ -592,7 +592,7 @@ class _MultistepFormState extends State<MultistepForm> {
                                     ),
                                     child: SizedBox(
                                       height: 25,
-                                      width: 45,
+                                      width: 40,
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
@@ -770,7 +770,7 @@ class _MultistepFormState extends State<MultistepForm> {
                                     ),
                                     child: SizedBox(
                                       height: 25,
-                                      width: 45,
+                                      width: 40,
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [

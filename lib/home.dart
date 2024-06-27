@@ -1,13 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'Categorys_pages/Categories.dart';
 import 'Settings/My_Profile.dart';
 import 'bottombar.dart';
-
 import 'Categorys_pages/categories_homepage.dart';
-import 'wishlist.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -190,8 +186,20 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: true,
         backgroundColor: Colors.white,
-        title: const Center(child: Text('Masery Shop')),
+        title: Center(child: Text('Masery Shop')),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Profile()),
+            );
+          },
+          child: CircleAvatar(
+            backgroundImage: AssetImage('assets/logo.png'),
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -209,35 +217,35 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+      // drawer: Drawer(
+      //   child: ListView(
+      //     padding: EdgeInsets.zero,
+      //     children: <Widget>[
+      //       const DrawerHeader(
+      //         decoration: BoxDecoration(
+      //           color: Colors.blue,
+      //         ),
+      //         child: Text(
+      //           'Drawer Header',
+      //           style: TextStyle(
+      //             color: Colors.white,
+      //             fontSize: 24,
+      //           ),
+      //         ),
+      //       ),
+      //       ListTile(
+      //         leading: const Icon(Icons.home),
+      //         title: const Text('Home'),
+      //         onTap: () {},
+      //       ),
+      //       ListTile(
+      //         leading: const Icon(Icons.settings),
+      //         title: const Text('Settings'),
+      //         onTap: () {},
+      //       ),
+      //     ],
+      //   ),
+      // ),
       body: Column(
         children: [
           Padding(

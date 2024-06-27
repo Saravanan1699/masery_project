@@ -217,35 +217,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      // drawer: Drawer(
-      //   child: ListView(
-      //     padding: EdgeInsets.zero,
-      //     children: <Widget>[
-      //       const DrawerHeader(
-      //         decoration: BoxDecoration(
-      //           color: Colors.blue,
-      //         ),
-      //         child: Text(
-      //           'Drawer Header',
-      //           style: TextStyle(
-      //             color: Colors.white,
-      //             fontSize: 24,
-      //           ),
-      //         ),
-      //       ),
-      //       ListTile(
-      //         leading: const Icon(Icons.home),
-      //         title: const Text('Home'),
-      //         onTap: () {},
-      //       ),
-      //       ListTile(
-      //         leading: const Icon(Icons.settings),
-      //         title: const Text('Settings'),
-      //         onTap: () {},
-      //       ),
-      //     ],
-      //   ),
-      // ),
       body: Column(
         children: [
           Padding(
@@ -256,10 +227,6 @@ class _HomePageState extends State<HomePage> {
               decoration: InputDecoration(
                 hintText: 'Search any Product...',
                 prefixIcon: Icon(Icons.search, color: Color(0xffBBBBBB)),
-                // suffixIcon: Icon(
-                //   Icons.mic,
-                //   color: Color(0xffBBBBBB),
-                // ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   borderSide: BorderSide.none,
@@ -276,32 +243,6 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //       child: Container(
-                    //         height: 50,
-                    //         child: TextFormField(
-                    //           controller: _searchController,
-                    //           decoration: InputDecoration(
-                    //             hintText: 'Search...',
-                    //             prefixIcon:
-                    //                 Icon(Icons.search, color: Color(0xffBBBBBB)),
-                    //             suffixIcon: Icon(
-                    //               Icons.mic,
-                    //               color: Color(0xffBBBBBB),
-                    //             ),
-                    //             border: OutlineInputBorder(
-                    //               borderRadius: BorderRadius.circular(10),
-                    //             ),
-                    //             filled: true,
-                    //             fillColor: Colors.white,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Row(
@@ -346,12 +287,9 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.grey[100],
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
-                                  
                                   // fit: BoxFit.cover,
                                   image: AssetImage(
-                                    
                                     imagePaths[
-                                    
                                       index]),
                                 ),
                               ),
@@ -407,7 +345,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                   
                     SizedBox(
                       height: 10,
                     ),

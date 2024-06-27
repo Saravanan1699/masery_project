@@ -327,8 +327,39 @@ class _ProfileState extends State<Profile> {
                 // indent: 5, // Customize left indentation of divider
                 // endIndent: 5, // Customize right indentation of divider
               ),
+              SizedBox(height: screenHeight * 0.02),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Logout',
+                    style: GoogleFonts.poppins(
+                      fontSize: screenWidth * 0.038, // Responsive font size
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFFEA1712),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      // Implement your logout functionality here
+                      // For example:
+                      // Navigator.pushReplacementNamed(context, '/login');
+                    },
+                    child: Icon(
+                      Icons.logout, // Replace with your desired icon
+                      size: screenWidth * 0.06, // Responsive icon size
+                      color: Color(0xFFEA1712),
+                    ),
+                  ),
+                ],
+              ),
+              Divider(
+                color: Color(0xFF9B9B9B), // Customize divider color here
+                thickness: 0.1, // Customize divider thickness here
+                height: 20, // Customize divider height here
+              ),
             ],
-          )
+          ),
         ),
       ),
       bottomNavigationBar: BottomBar(

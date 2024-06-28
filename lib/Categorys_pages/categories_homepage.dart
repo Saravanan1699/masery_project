@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../Base_Url/BaseUrl.dart';
 import '../home.dart';
 import 'Categories.dart';
 import 'Categories_mobile.dart';
@@ -11,6 +14,62 @@ class CategoriesHomepage extends StatefulWidget {
 }
 
 class _CategoriesHomepageState extends State<CategoriesHomepage> {
+  List categories = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+  }
+
+  Future<void> fetchCategories() async {
+    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}categories'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        categories = data['data'];
+        isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load categories');
+    }
+  }
+
+  void navigateToCategoryPage(String categoryName) {
+    Widget page;
+    switch (categoryName) {
+      case 'Asus':
+        page = Categories();
+        break;
+      case 'Acer':
+        page = Categories();
+        break;
+      case 'HP':
+        page = Graphics_card();
+        break;
+      case 'Samsung':
+        page = Graphics_card();
+        break;
+      case 'Lenovo':
+        page = Categories();
+        break;
+      case 'Apple':
+        page = Categories();
+        break;
+      case 'Android':
+        page = Categories_mobile();
+        break;
+      case 'Samsung A13':
+        page = Categories_mobile();
+        break;
+      default:
+        page = Categories(); // Default page if category doesn't match any case
+    }
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -23,8 +82,8 @@ class _CategoriesHomepageState extends State<CategoriesHomepage> {
         title: Text(
           'Category',
           style: GoogleFonts.raleway(
-            fontSize: screenWidth * 0.05, // Slightly smaller font size for the description
-            fontWeight: FontWeight.w700, // Regular weight for the description
+            fontSize: screenWidth * 0.05,
+            fontWeight: FontWeight.w700,
             color: Color(0xFF2B2B2B),
           ),
         ),
@@ -37,8 +96,7 @@ class _CategoriesHomepageState extends State<CategoriesHomepage> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               child: IconButton(
-                icon: Icon(Icons.arrow_back_ios_new_outlined,
-                  size: 15,),
+                icon: Icon(Icons.arrow_back_ios_new_outlined, size: 15),
                 onPressed: () {
                   setState(() {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
@@ -49,60 +107,29 @@ class _CategoriesHomepageState extends State<CategoriesHomepage> {
           },
         ),
       ),
-      body: Padding(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
         padding: EdgeInsets.all(16.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          childAspectRatio: 1.2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          children: [
-            CategoryCard(
-              image: Image.asset('assets/top.png'), // Replace with your image path
-              label: 'Laptop',
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1.2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: categories.length,
+          itemBuilder: (context, index) {
+            return CategoryCard(
+              image: Image.asset('assets/top.png'), // Replace with your image path or use a dynamic image
+              label: categories[index]['name'],
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Categories()));
+                navigateToCategoryPage(categories[index]['name']);
               },
-            ),
-            CategoryCard(
-              image: Image.asset('assets/Mobile_3.png'), // Replace with your image path
-              label: 'Mobile',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Categories_mobile()));
-              },
-            ),
-            CategoryCard(
-              image: Image.asset('assets/Graphics_card.png'), // Replace with your image path
-              label: 'Graphics Card',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Graphics_card()));
-              },
-            ),
-            CategoryCard(
-              image: Image.asset('assets/Memory.png'), // Replace with your image path
-              label: 'SSD',
-              onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryDetailPage()));
-              },
-            ),
-            CategoryCard(
-              image: Image.asset('assets/Keyboard.png'), // Replace with your image path
-              label: 'Keyboard & Mouse',
-              onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryDetailPage()));
-              },
-            ),
-            CategoryCard(
-              image: Image.asset('assets/Motherboard.png'), // Replace with your image path
-              label: 'Motherboard',
-              onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryDetailPage()));
-              },
-            ),
-          ],
+            );
+          },
         ),
-      )
-
+      ),
     );
   }
 }
@@ -131,12 +158,14 @@ class CategoryCard extends StatelessWidget {
             Expanded(child: image),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(label,
+              child: Text(
+                label,
                 style: GoogleFonts.raleway(
-                fontSize: screenWidth * 0.04, // Slightly smaller font size for the description
-                fontWeight: FontWeight.w700, // Regular weight for the description
-                color: Color(0xFF2B2B2B),
-              ),),
+                  fontSize: screenWidth * 0.04,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF2B2B2B),
+                ),
+              ),
             ),
           ],
         ),
@@ -144,6 +173,3 @@ class CategoryCard extends StatelessWidget {
     );
   }
 }
-
-
-

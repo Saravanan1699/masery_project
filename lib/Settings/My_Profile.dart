@@ -1,17 +1,116 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../Authentication/Sing-in.dart'; // Ensure correct import path
+import '../Base_Url/BaseUrl.dart';
 import '../bottombar.dart';
 import '../home.dart';
 import 'Settings.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
+  const Profile({Key? key}) : super(key: key); // Corrected super.key to Key key
 
   @override
   State<Profile> createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
+  late SharedPreferences _prefs;
+  String? authToken;
+
+  @override
+  void initState() {
+    super.initState();
+    initSharedPreferences();
+  }
+
+  Future<void> initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+    authToken = _prefs.getString('authToken');
+  }
+
+  Future<void> logoutUser() async {
+    if (authToken == null || authToken!.isEmpty) {
+      // Token is empty or null, navigate to login screen directly
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Signin()),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}logout'),
+        headers: {
+          'Authorization': 'Bearer $authToken',
+        },
+      );
+
+      print('Logout API Status Code: ${response.statusCode}');
+      print('Logout API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var responseData = jsonDecode(response.body);
+        print('Response data: $responseData');
+
+        if (responseData['success']) {
+          // Clear stored token on successful logout
+          await _prefs.remove('authToken');
+
+          // Show success message using Snackbar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseData['message']),
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          // Navigate to signin page
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Signin()),
+          );
+        } else {
+          // Handle unsuccessful logout
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseData['message'] ?? 'Logout failed. Please try again.'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      } else if (response.statusCode == 401) {
+        // Handle token expired or unauthorized
+        await _prefs.remove('authToken');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Token expired or unauthorized. Please login again.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } else {
+        // Handle API call failure
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Logout failed with status code ${response.statusCode}'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle exception
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred while logging out: $e'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -21,9 +120,10 @@ class _ProfileState extends State<Profile> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('My Profile',
-          style: GoogleFonts.raleway( // Using Google Fonts
-            fontSize: screenWidth * 0.07, // Responsive font size
+        title: Text(
+          'My Profile',
+          style: GoogleFonts.raleway(
+            fontSize: screenWidth * 0.07,
             fontWeight: FontWeight.w700,
             color: Color(0xFF2B2B2B),
           ),
@@ -37,11 +137,16 @@ class _ProfileState extends State<Profile> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               child: IconButton(
-                icon: Icon(Icons.arrow_back_ios_new_outlined,
-                  size: 15,),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_outlined,
+                  size: 15,
+                ),
                 onPressed: () {
                   setState(() {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                    );
                   });
                 },
               ),
@@ -65,17 +170,17 @@ class _ProfileState extends State<Profile> {
               Row(
                 children: [
                   CircleAvatar(
-                    radius: 30, // Size of the avatar
-                    backgroundImage: AssetImage('assets/avatar.png'), // Replace with your image asset
+                    radius: 30,
+                    backgroundImage: AssetImage('assets/avatar.png'),
                   ),
-                  SizedBox(width: 16), // Space between image and text
+                  SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Matilda Brown',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.05, // Responsive font size
+                          fontSize: screenWidth * 0.05,
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF2B2B2B),
                         ),
@@ -83,7 +188,7 @@ class _ProfileState extends State<Profile> {
                       Text(
                         'matildabrown@mail.com',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.04, // Responsive font size
+                          fontSize: screenWidth * 0.04,
                           color: Color(0xFF2B2B2B),
                         ),
                       ),
@@ -92,42 +197,40 @@ class _ProfileState extends State<Profile> {
                 ],
               ),
               SizedBox(height: screenHeight * 0.07),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'My orders',
-                  style: GoogleFonts.poppins(
-                    fontSize: screenWidth * 0.035, // Responsive font size
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF222222),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'My orders',
+                        style: GoogleFonts.poppins(
+                          fontSize: screenWidth * 0.035,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF222222),
+                        ),
+                      ),
+                      Text(
+                        'Already have 12 orders',
+                        style: GoogleFonts.poppins(
+                          fontSize: screenWidth * 0.03,
+                          color: Color(0xFF9B9B9B),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Text(
-                  'Already have 12 orders',
-                  style: GoogleFonts.poppins(
-                    fontSize: screenWidth * 0.03, // Responsive font size
+                  Icon(
+                    Icons.keyboard_arrow_right,
+                    size: screenWidth * 0.06,
                     color: Color(0xFF9B9B9B),
                   ),
-                ),
-              ],
-            ),
-            Icon(
-              Icons.keyboard_arrow_right, // Replace with your desired icon
-              size: screenWidth * 0.06, // Responsive icon size
-              color: Color(0xFF9B9B9B),
-            ),
-          ],
-        ),
+                ],
+              ),
               Divider(
-                color: Color(0xFF9B9B9B), // Customize divider color here
-                thickness: 0.1, // Customize divider thickness here
-                height: 20, // Customize divider height here
-                // indent: 5, // Customize left indentation of divider
-                // endIndent: 5, // Customize right indentation of divider
+                color: Color(0xFF9B9B9B),
+                thickness: 0.1,
+                height: 20,
               ),
               SizedBox(height: screenHeight * 0.02),
               Row(
@@ -139,33 +242,31 @@ class _ProfileState extends State<Profile> {
                       Text(
                         'Shipping addresses',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.035, // Responsive font size
+                          fontSize: screenWidth * 0.035,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF222222),
                         ),
                       ),
                       Text(
-                        '3 ddresses',
+                        '3 addresses',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.03, // Responsive font size
+                          fontSize: screenWidth * 0.03,
                           color: Color(0xFF9B9B9B),
                         ),
                       ),
                     ],
                   ),
                   Icon(
-                    Icons.keyboard_arrow_right, // Replace with your desired icon
-                    size: screenWidth * 0.06, // Responsive icon size
+                    Icons.keyboard_arrow_right,
+                    size: screenWidth * 0.06,
                     color: Color(0xFF9B9B9B),
                   ),
                 ],
               ),
               Divider(
-                color: Color(0xFF9B9B9B), // Customize divider color here
-                thickness: 0.1, // Customize divider thickness here
-                height: 20, // Customize divider height here
-                // indent: 5, // Customize left indentation of divider
-                // endIndent: 5, // Customize right indentation of divider
+                color: Color(0xFF9B9B9B),
+                thickness: 0.1,
+                height: 20,
               ),
               SizedBox(height: screenHeight * 0.02),
               Row(
@@ -177,7 +278,7 @@ class _ProfileState extends State<Profile> {
                       Text(
                         'Payment methods',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.035, // Responsive font size
+                          fontSize: screenWidth * 0.035,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF222222),
                         ),
@@ -185,25 +286,23 @@ class _ProfileState extends State<Profile> {
                       Text(
                         'Visa **34',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.03, // Responsive font size
+                          fontSize: screenWidth * 0.03,
                           color: Color(0xFF9B9B9B),
                         ),
                       ),
                     ],
                   ),
                   Icon(
-                    Icons.keyboard_arrow_right, // Replace with your desired icon
-                    size: screenWidth * 0.06, // Responsive icon size
+                    Icons.keyboard_arrow_right,
+                    size: screenWidth * 0.06,
                     color: Color(0xFF9B9B9B),
                   ),
                 ],
               ),
               Divider(
-                color: Color(0xFF9B9B9B), // Customize divider color here
-                thickness: 0.1, // Customize divider thickness here
-                height: 20, // Customize divider height here
-                // indent: 5, // Customize left indentation of divider
-                // endIndent: 5, // Customize right indentation of divider
+                color: Color(0xFF9B9B9B),
+                thickness: 0.1,
+                height: 20,
               ),
               SizedBox(height: screenHeight * 0.02),
               Row(
@@ -215,7 +314,7 @@ class _ProfileState extends State<Profile> {
                       Text(
                         'Promocodes',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.035, // Responsive font size
+                          fontSize: screenWidth * 0.035,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF222222),
                         ),
@@ -223,25 +322,23 @@ class _ProfileState extends State<Profile> {
                       Text(
                         'You have special promocodes',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.03, // Responsive font size
+                          fontSize: screenWidth * 0.03,
                           color: Color(0xFF9B9B9B),
                         ),
                       ),
                     ],
                   ),
                   Icon(
-                    Icons.keyboard_arrow_right, // Replace with your desired icon
-                    size: screenWidth * 0.06, // Responsive icon size
+                    Icons.keyboard_arrow_right,
+                    size: screenWidth * 0.06,
                     color: Color(0xFF9B9B9B),
                   ),
                 ],
               ),
               Divider(
-                color: Color(0xFF9B9B9B), // Customize divider color here
-                thickness: 0.1, // Customize divider thickness here
-                height: 20, // Customize divider height here
-                // indent: 5, // Customize left indentation of divider
-                // endIndent: 5, // Customize right indentation of divider
+                color: Color(0xFF9B9B9B),
+                thickness: 0.1,
+                height: 20,
               ),
               SizedBox(height: screenHeight * 0.02),
               Row(
@@ -253,7 +350,7 @@ class _ProfileState extends State<Profile> {
                       Text(
                         'My reviews',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.035, // Responsive font size
+                          fontSize: screenWidth * 0.035,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF222222),
                         ),
@@ -261,25 +358,23 @@ class _ProfileState extends State<Profile> {
                       Text(
                         'Reviews for 4 items',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.03, // Responsive font size
+                          fontSize: screenWidth * 0.03,
                           color: Color(0xFF9B9B9B),
                         ),
                       ),
                     ],
                   ),
                   Icon(
-                    Icons.keyboard_arrow_right, // Replace with your desired icon
-                    size: screenWidth * 0.06, // Responsive icon size
+                    Icons.keyboard_arrow_right,
+                    size: screenWidth * 0.06,
                     color: Color(0xFF9B9B9B),
                   ),
                 ],
               ),
               Divider(
-                color: Color(0xFF9B9B9B), // Customize divider color here
-                thickness: 0.1, // Customize divider thickness here
-                height: 20, // Customize divider height here
-                // indent: 5, // Customize left indentation of divider
-                // endIndent: 5, // Customize right indentation of divider
+                color: Color(0xFF9B9B9B),
+                thickness: 0.1,
+                height: 20,
               ),
               SizedBox(height: screenHeight * 0.02),
               Row(
@@ -291,7 +386,7 @@ class _ProfileState extends State<Profile> {
                       Text(
                         'Settings',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.035, // Responsive font size
+                          fontSize: screenWidth * 0.035,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF222222),
                         ),
@@ -299,7 +394,7 @@ class _ProfileState extends State<Profile> {
                       Text(
                         'Notifications, password',
                         style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.03, // Responsive font size
+                          fontSize: screenWidth * 0.03,
                           color: Color(0xFF9B9B9B),
                         ),
                       ),
@@ -313,19 +408,17 @@ class _ProfileState extends State<Profile> {
                       );
                     },
                     child: Icon(
-                      Icons.keyboard_arrow_right, // Replace with your desired icon
-                      size: screenWidth * 0.06, // Responsive icon size
+                      Icons.keyboard_arrow_right,
+                      size: screenWidth * 0.06,
                       color: Color(0xFF9B9B9B),
                     ),
                   ),
                 ],
               ),
               Divider(
-                color: Color(0xFF9B9B9B), // Customize divider color here
-                thickness: 0.1, // Customize divider thickness here
-                height: 20, // Customize divider height here
-                // indent: 5, // Customize left indentation of divider
-                // endIndent: 5, // Customize right indentation of divider
+                color: Color(0xFF9B9B9B),
+                thickness: 0.1,
+                height: 20,
               ),
               SizedBox(height: screenHeight * 0.02),
               Row(
@@ -334,29 +427,25 @@ class _ProfileState extends State<Profile> {
                   Text(
                     'Logout',
                     style: GoogleFonts.poppins(
-                      fontSize: screenWidth * 0.038, // Responsive font size
+                      fontSize: screenWidth * 0.038,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFFEA1712),
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
-                      // Implement your logout functionality here
-                      // For example:
-                      // Navigator.pushReplacementNamed(context, '/login');
-                    },
+                    onTap: logoutUser,
                     child: Icon(
-                      Icons.logout, // Replace with your desired icon
-                      size: screenWidth * 0.06, // Responsive icon size
+                      Icons.logout,
+                      size: screenWidth * 0.06,
                       color: Color(0xFFEA1712),
                     ),
                   ),
                 ],
               ),
               Divider(
-                color: Color(0xFF9B9B9B), // Customize divider color here
-                thickness: 0.1, // Customize divider thickness here
-                height: 20, // Customize divider height here
+                color: Color(0xFF9B9B9B),
+                thickness: 0.1,
+                height: 20,
               ),
             ],
           ),
@@ -365,7 +454,8 @@ class _ProfileState extends State<Profile> {
       bottomNavigationBar: BottomBar(
         onTap: (index) {
           setState(() {});
-        }, favoriteProducts: [],
+        },
+        favoriteProducts: [],
       ),
     );
   }

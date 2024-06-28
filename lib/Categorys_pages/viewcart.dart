@@ -1,10 +1,9 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:masery_project/Address-deatils.dart';
+import 'package:masery_project/Categorys_pages/your_cart.dart';
 import '../Multiple_stepform/step_form.dart';
 import 'Categories.dart';
-import '../Checkout.dart';
 import '../bottombar.dart';
 
 class cartview extends StatefulWidget {
@@ -20,6 +19,9 @@ class _cartviewState extends State<cartview> {
   PageController _pageController = PageController();
   double _currentPage = 0;
   bool _isExpanded = false;
+  List<Map<String, String>> cart = [];
+  int cartCount = 0;
+
   List<Map<String, String>> getProducts() {
     return [
       {
@@ -88,20 +90,30 @@ class _cartviewState extends State<cartview> {
     });
   }
 
+  void addToCart(Map<String, String> product) {
+    setState(() {
+      cart.add(product);
+      cartCount++;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Map<String, String>> products = getProducts();
     List<String> backgroundImages = getBackgroundImages();
     List<String> imagePaths = getImagePaths();
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text('Description',
+        title: Text(
+          'Description',
           style: GoogleFonts.raleway(
-            fontSize: screenWidth * 0.05, // Slightly smaller font size for the description
+            fontSize: screenWidth *
+                0.05, // Slightly smaller font size for the description
             fontWeight: FontWeight.w700, // Regular weight for the description
             color: Color(0xFF2B2B2B),
           ),
@@ -130,10 +142,42 @@ class _cartviewState extends State<cartview> {
           },
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundImage: AssetImage('assets/avatar.png'),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CartPage(cart: cart),
+                ),
+              );
+            },
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircleAvatar(
+                    child: Icon(
+                      Icons.shopping_bag,
+                      size: 24.0,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: Colors.blue,
+                  ),
+                ),
+                if (cartCount > 0)
+                  Positioned(
+                    right: 4,
+                    top: 4,
+                    child: CircleAvatar(
+                      radius: 8,
+                      backgroundColor: Colors.red,
+                      child: Text(
+                        '$cartCount',
+                        style: TextStyle(fontSize: 12, color: Colors.white),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ],
@@ -185,10 +229,14 @@ class _cartviewState extends State<cartview> {
                       Padding(
                         padding: const EdgeInsets.only(left: 15.0),
                         child: Text(
-                          '-23% \$ 71,990',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                          // '-23% \$ 71,990',
+                          'In Stock',
+                          style: GoogleFonts.inter(
+                            // Using Google Fonts
+                            fontSize:
+                                screenWidth * 0.05, // Responsive font size
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF0FBC00),
                           ),
                         ),
                       ),
@@ -252,11 +300,11 @@ class _cartviewState extends State<cartview> {
                     dotsCount: imagePaths.length,
                     position: _currentPage,
                     decorator: DotsDecorator(
-                      color: Colors.grey,
-                      activeColor: Color(0xff0D6EFD),
-                      size: const Size.square(8.0),
-                      activeSize: const Size.square(10.0),
-                      spacing: const EdgeInsets.symmetric(horizontal: 5.0),
+                      color: Color(0xff0D6EFD),
+                      activeColor: Color(0xffF87265),
+                      size: Size.square(9.0),
+                      activeSize: Size(18.0, 9.0),
+                      spacing: EdgeInsets.symmetric(horizontal: 5.0),
                       activeShape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.0)),
                     ),
@@ -274,21 +322,38 @@ class _cartviewState extends State<cartview> {
                           fontWeight: FontWeight.w500),
                     ),
                   ),
+                  SizedBox(height: screenHeight * 0.02),
                   Padding(
-                    padding: const EdgeInsets.only(right: 15.0),
+                    padding: EdgeInsets.only(left: 15.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        // Sale Price
                         Text(
-                          'Read More',
-                          style: TextStyle(
-                              color: Color(0xff0D6EFD),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400),
+                          '\$ 71,990',
+                          style: GoogleFonts.inter(
+                            fontSize: screenWidth * 0.04,
+                            fontWeight: FontWeight.w300,
+                            color: Color(0xFF6B7280),
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                        SizedBox(
+                            width:
+                                10), // Adjust spacing between prices if needed
+                        // Purchase Price with Strikethrough
+                        Text(
+                          '\$ 65,000', // Example purchase price
+                          style: GoogleFonts.inter(
+                            fontSize: screenWidth * 0.05,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF2B2B2B),
+                          ),
                         ),
                       ],
                     ),
                   ),
+                  SizedBox(height: screenHeight * 0.01),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Row(
@@ -296,10 +361,14 @@ class _cartviewState extends State<cartview> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => checkout()));
+                            // Replace with actual product data
+                            Map<String, String> product = {
+                              'image': 'assets/laptop.png',
+                              'name':
+                                  'Acer Aspire Lite AMD Ryzen 5 5500U Premium Thin and Light Laptop (16 GB RAM/512 GB SSD/Windows 11 Home)',
+                              'price': '\$300',
+                            };
+                            addToCart(product);
                           },
                           child: Text(
                             'Add to cart',
@@ -338,200 +407,6 @@ class _cartviewState extends State<cartview> {
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                  Card(
-                    elevation: 4,
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: SizedBox(
-                      height: 450.0,
-                      width: 350.0,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Text(
-                                  'Ratings & Reviews',
-                                  style: TextStyle(fontSize: 17),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Divider(
-                            color: Colors.grey[300],
-                          ),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Text(
-                                  '4.8/5',
-                                  style: TextStyle(fontSize: 22),
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Overall Rating',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  Text(
-                                    '574 Ratings',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Color(0xff6B7280)),
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              ElevatedButton(
-                                onPressed: () {},
-                                child: Text(
-                                  'Rate',
-                                  style: TextStyle(color: Color(0xff0D6EFD)),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    side: BorderSide(color: Color(0xff0D6EFD)),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              )
-                            ],
-                          ),
-                          Divider(
-                            color: Colors.grey[300],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Amazing!',
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    Text(
-                                      'An amazing fit. I am somewhere around 6ft and\n ordered 40 size,'
-                                      'Its a perfect fit and quality \n'
-                                      'is worth the price...',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400,
-                                          color: Color(0xff6B7280)),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image(
-                                    image: AssetImage('assets/lenovo-lap.jpg'),
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image(
-                                    image: AssetImage('assets/lenovo-lap.jpg'),
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image(
-                                    image: AssetImage('assets/lenovo-lap.jpg'),
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 15.0, bottom: 15),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'David Johnson, 1st Jan 2024',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400,
-                                          color: Color(0xff6B7280)),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Divider(
-                            color: Colors.grey[300],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'View All 76 Reviews',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 15,
-                                      color: Color(0xff0D6EFD)),
-                                ),
-                                Spacer(),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(
-                                    Icons.arrow_forward_ios_sharp,
-                                    size: 15,
-                                  ),
-                                  color: Color(0xff0D6EFD),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                   Padding(
@@ -576,8 +451,7 @@ class _cartviewState extends State<cartview> {
                             elevation: 4,
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.circular(15.0),
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
                             child: Container(
                               width: 200,
@@ -590,8 +464,8 @@ class _cartviewState extends State<cartview> {
                                       borderRadius: BorderRadius.vertical(
                                           top: Radius.circular(15.0)),
                                       image: DecorationImage(
-                                        image:
-                                            AssetImage(products[index]['image']!),
+                                        image: AssetImage(
+                                            products[index]['image']!),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -634,7 +508,8 @@ class _cartviewState extends State<cartview> {
       bottomNavigationBar: BottomBar(
         onTap: (index) {
           setState(() {});
-        }, favoriteProducts: [],
+        },
+        favoriteProducts: [],
       ),
     );
   }

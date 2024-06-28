@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'bottombar.dart';
 import 'home.dart';
 
 class PlaceOrder extends StatefulWidget {
@@ -339,6 +340,11 @@ class _PlaceOrderState extends State<PlaceOrder> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomBar(
+        onTap: (index) {
+          setState(() {});
+        }, favoriteProducts: [],
       ),
     );
   }

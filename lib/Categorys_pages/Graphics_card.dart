@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:masery_project/Categorys_pages/viewcart.dart';
 import '../bottombar.dart';
 import 'categories_homepage.dart';
 
@@ -279,6 +280,7 @@ class ResponsiveCardRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         buildCard(
+          context,
           screenWidth,
           screenHeight,
           commonTextStyle,
@@ -287,10 +289,9 @@ class ResponsiveCardRow extends StatelessWidget {
           description1,
           price1,
         ),
-        SizedBox(
-          width: 10,
-        ),
+        SizedBox(width: 10),
         buildCard(
+          context,
           screenWidth,
           screenHeight,
           commonTextStyle,
@@ -304,6 +305,7 @@ class ResponsiveCardRow extends StatelessWidget {
   }
 
   Widget buildCard(
+      BuildContext context,
       double screenWidth,
       double screenHeight,
       TextStyle commonTextStyle,
@@ -314,7 +316,14 @@ class ResponsiveCardRow extends StatelessWidget {
       ) {
     return GestureDetector(
       onTap: () {
-        // Navigate to the detail page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => cartview(
+
+            ),
+          ),
+        );
       },
       child: Card(
         color: Colors.white,

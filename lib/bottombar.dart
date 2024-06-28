@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'Cart.dart';
 import 'home.dart';
 import 'Categorys_pages/Categories.dart';
-import 'place_order.dart';
 import 'wishlist.dart';
 
 class BottomBar extends StatelessWidget {

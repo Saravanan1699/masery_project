@@ -1,9 +1,12 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
 import 'package:dots_indicator/dots_indicator.dart';
+
+import 'Categorys_pages/categories_homepage.dart';
 import 'Settings/My_Profile.dart';
 import 'bottombar.dart';
-import 'Categorys_pages/categories_homepage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,60 +16,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  FocusNode _focusNode = FocusNode();
-  List<String> getImagePaths() {
-    return [
-      'assets/Graphics.png',
-      'assets/mobile.png',
-      'assets/ssd.png',
-      'assets/Electronics.png',
-      'assets/accessories.png',
-      'assets/another_image.png', // Add more paths if needed
-    ];
-  }
- final List<String> backgroundImages = [
-    'assets/Colorful.png',
-    'assets/laptop_image.png',
-    'assets/offerlap.png',
-    'assets/offerlaptop.png',
-    'assets/offerslap.png',
-  ];
-
-  List<Map<String, String>> getProducts() {
-    return [
-      {
-        'image': 'assets/laptop.png',
-        'name':
-            'Acer Aspire Lite AMD Ryzen 5 5500U Premium Thin and Light Laptop (16 GB RAM/512 GB SSD/Windows 11 Home)',
-        'price': '\$300',
-      },
-      {
-        'image': 'assets/laptop_1.png',
-        'name':
-            'Apple 2023 MacBook Pro (16-inch, M3 Max chip with 16‑core CPU and 40‑core GPU, 48GB Unified Memory, 1TB)',
-        'price': '\$700',
-      },
-      {
-        'image': 'assets/laptop_2.png',
-        'name':
-            'ASUS VivoBook 15 (2021) Thin and Light Laptop, Dual Core Intel Celeron N4020, 15.6-inch (39.62 cm) HD, (4GB RAM/256GB SSD/Integrated Graphics) ',
-        'price': '\$120',
-      },
-      {
-        'image': 'assets/laptop.png',
-        'name':
-            'Lenovo IdeaPad Slim 1 AMD Ryzen 5 5500U 15.6" HD Thin and Light Laptop (16GB/512GB SSD/Windows ',
-        'price': '\$450',
-      },
-      {
-        'image': 'assets/laptop_1.png',
-        'name':
-            'HONOR MagicBook X16 (2024), 12th Gen Intel Core i5-12450H, 16-inch (40.64 cm) FHD ',
-        'price': '\$80',
-      },
-    ];
-  }
-
   List<Map<String, dynamic>> mostpopular = [
     {
       'image': 'assets/mp_1.png',
@@ -111,81 +60,66 @@ class _HomePageState extends State<HomePage> {
       'isFavorite': false,
     },
   ];
-
-  final List<List<String>> category = [
-    [
-      'assets/laptop.png',
-      'assets/laptop.png',
-      'assets/laptop.png',
-      'assets/laptop.png'
-    ],
-    [
-      'assets/laptop_1.png',
-      'assets/laptop_1.png',
-      'assets/laptop_1.png',
-      'assets/laptop_1.png'
-    ],
-    [
-      'assets/laptop_2.png',
-      'assets/laptop_2.png',
-      'assets/laptop_2.png',
-      'assets/laptop_2.png'
-    ],
-    [
-      'assets/laptop_2.png',
-      'assets/laptop_2.png',
-      'assets/laptop_2.png',
-      'assets/laptop_2.png'
-    ],
-    [
-      'assets/laptop_2.png',
-      'assets/laptop_2.png',
-      'assets/laptop_2.png',
-      'assets/laptop_2.png'
-    ],
-  ];
-
-  bool _isSearching = false;
+  List<dynamic> banners = [];
+  List<dynamic> featuredProducts = [];
+  List<dynamic> recentProducts = [];
+  List<dynamic> allProducts = [];
+  List<dynamic> categoryBasedProducts = [];
+  late PageController _pageController;
+  double _currentPage = 0.0;
+  Timer? _timer;
   final TextEditingController _searchController = TextEditingController();
-  PageController _pageController = PageController();
-  double _currentPage = 0;
-   late Timer _timer;
-    @override
+  FocusNode _focusNode = FocusNode();
+
+
+  @override
   void initState() {
     super.initState();
+    _pageController = PageController(viewportFraction: 0.8);
+    fetchData();
 
-    _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
-      if (_pageController.page == backgroundImages.length - 1) {
+    // Start the timer to auto-scroll every 3 seconds
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      if (_pageController.hasClients) {
+        int nextPage = (_pageController.page!.round() + 1) % banners.length;
         _pageController.animateToPage(
-          0,
-          duration: Duration(milliseconds: 400),
-          curve: Curves.easeInOut,
-        );
-      } else {
-        _pageController.nextPage(
-          duration: Duration(milliseconds: 400),
+          nextPage,
+          duration: const Duration(milliseconds: 400),
           curve: Curves.easeInOut,
         );
       }
     });
   }
 
+  Future<void> fetchData() async {
+    final response = await http.get(Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/homescreen'));
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      setState(() {
+        banners = jsonResponse['data']['banners'];
+        featuredProducts = jsonResponse['data']['featured_products'];
+        recentProducts = jsonResponse['data']['recent_products'];
+        allProducts = jsonResponse['data']['allProducts'];
+        categoryBasedProducts = jsonResponse['data']['categoryBasedProducts'];
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
   @override
   void dispose() {
-    _timer.cancel();
     _pageController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> imagePaths = getImagePaths();
-    
-    List<Map<String, String>> products = getProducts();
-
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
+      appBar:AppBar(
         automaticallyImplyLeading: true,
         backgroundColor: Colors.white,
         title: Center(child: Text('Masery Shop')),
@@ -219,6 +153,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -238,747 +173,442 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            size: 15,
-                            color: Color(0xff828282),
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            'Delivary to  Mari - Chennai 600118 ',
-                            style: TextStyle(
-                                color: Color(0xff828282), fontSize: 12),
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Icon(Icons.keyboard_arrow_down_outlined,
-                              size: 15, color: Color(0xff828282)),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      color: Colors.white,
-                      height: 90,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 6,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.all(8.0),
+            child: banners.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    height: 250,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: banners.length,
+                      onPageChanged: (int page) {
+                        setState(() {
+                          _currentPage = page.toDouble();
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        final banner = banners[index];
+                        final imageUrl = 'https://sgitjobs.com/MaseryShoppingNew/public/${banner['path']}';
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            color: Colors.white,
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
                             child: Container(
-                              width: 60,
-                              height: 60,
                               decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  // fit: BoxFit.cover,
-                                  image: AssetImage(
-                                    imagePaths[
-                                      index]),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                     Container(
-                      height: 200,
-                      child: PageView.builder(
-                        controller: _pageController,
-                        itemCount: backgroundImages.length,
-                        onPageChanged: (int page) {
-                          setState(() {
-                            _currentPage = page.toDouble();
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Card(
-                              elevation: 4,
-                              shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  image: DecorationImage(
-                                    image: AssetImage(backgroundImages[index]),
-                                    fit: BoxFit.cover,
-                                  ),
+                                image: DecorationImage(
+                                  image: NetworkImage(imageUrl),
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    DotsIndicator(
-                      dotsCount: backgroundImages.length,
-                      position: _currentPage,
-                      decorator: DotsDecorator(
-                        color: Colors.grey,
-                        activeColor: Colors.blue,
-                        size: const Size.square(8.0),
-                        activeSize: const Size.square(10.0),
-                        spacing: const EdgeInsets.symmetric(horizontal: 5.0),
-                        activeShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'New Item',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        Spacer(),
-                        Text(
-                          'See All',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
-                          ),
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.arrow_forward,
-                            size: 25,
-                            color: Colors
-                                .white, // Ensure the icon is visible against the blue background
-                          ),
-                        )
-                      ],
+                        );
+                      },
                     ),
-                    Container(
-                      height: 300,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: products.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Container(
-                              width: 200,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    height: 150,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(15.0)),
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            products[index]['image']!),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      products[index]['name']!,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
-                                    child: Text(
-                                      products[index]['price']!,
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Most Popular',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Spacer(),
-                        Text(
-                          'See All',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors
-                                .blue, // Set the background color of the container
-                            shape:
-                                BoxShape.circle, // Make the container circular
-                          ),
-                          padding: EdgeInsets.all(
-                              8.0), // Adjust the padding to control the size of the circle
-                          child: Icon(
-                            Icons.arrow_forward,
-                            size: 25,
-                            color: Colors
-                                .white, // Ensure the icon is visible against the blue background
-                          ),
-                        )
-                      ],
-                    ),
-                      Container(
-        height: 150,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: mostpopular.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  mostpopular[index]['isFavorite'] = !mostpopular[index]['isFavorite'];
-                });
-              },
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Container(
-                  width: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(height: 16),
+                  DotsIndicator(
+                    dotsCount: banners.length,
+                    position: _currentPage,
+                    decorator: const DotsDecorator(
+                      activeColor: Colors.blue,
+                      size: Size.square(8.0),
+                      activeSize: Size.square(8.0),
+                    ),
+                    onTap: (index) {
+                      _pageController.animateToPage(
+                        index.toInt(),
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                  // Featured Products Section
+                  Row(
                     children: [
+                      const Text(
+                        'Featured Products',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Text(
+                        'See All',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       Container(
-                        height: 70,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                          image: DecorationImage(
-                            image: AssetImage(mostpopular[index]['image']),
-                            fit: BoxFit.contain,
-                          ),
+                        decoration: const BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                mostpopular[index]['price'],
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                mostpopular[index]['isFavorite']
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: Colors.red,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  mostpopular[index]['isFavorite'] = !mostpopular[index]['isFavorite'];
-                                });
-                              },
-                            ),
-                          ],
+                        padding: const EdgeInsets.all(8.0),
+                        child: const Icon(
+                          Icons.arrow_forward,
+                          size: 25,
+                          color: Colors.white,
                         ),
-                      ),
+                      )
                     ],
                   ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-     
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Categories',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Spacer(),
-                        Text(
-                          'See All',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
-                          ),
-                          padding: EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CategoriesHomepage()),
-                              );
-                            },
-                            child: Icon(
-                              Icons.arrow_forward,
-                              size: 25,
-                              color: Colors
-                                  .white, // Ensure the icon is visible against the blue background
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 300,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: featuredProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = featuredProducts[index];
+                        final imageUrl = 'https://sgitjobs.com/MaseryShoppingNew/public/${product['product']['image'][0]['path']}';
 
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Left Column
-                        Expanded(
-                          child: Card(
-                            elevation: 4,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Upper Row in Left Column
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/laptop.png',
-                                              fit: BoxFit.contain),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              8), // Adjust the spacing between the containers
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/laptop_1.png',
-                                              fit: BoxFit.contain),
-                                        ),
-                                      ),
-                                    ],
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 200,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(15.0)),
+                                    image: DecorationImage(
+                                      image: NetworkImage(imageUrl),
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/laptop_2.png',
-                                              fit: BoxFit.contain),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              8), // Adjust the spacing between the containers
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/laptop_1.png',
-                                              fit: BoxFit.contain),
-                                        ),
-                                      ),
-                                    ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    product['title'],
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.normal,
+                                    ),
                                   ),
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        'Laptops',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Spacer(),
-                                      Container(
-                                        height: 30,
-                                        width: 40,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xffF2F2F2),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            '108',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(
-                            width:
-                                15), // Adjust the spacing between the columns
-                        // Right Column
-                        Expanded(
-                          child: Card(
-                            elevation: 4,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Upper Row in Right Column
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/laptop_1.png',
-                                              fit: BoxFit.cover),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              8), // Adjust the spacing between the containers
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/laptop_1.png',
-                                              fit: BoxFit.cover),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                            
-                                  // Lower Row in Right Column
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/laptop_1.png',
-                                              fit: BoxFit.cover),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              8), // Adjust the spacing between the containers
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/laptop_2.png',
-                                              fit: BoxFit.cover),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        'Accessories',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Spacer(),
-                                      Container(
-                                        height: 30,
-                                        width: 40,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xffF2F2F2),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            '530',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Left Column
-                        Expanded(
-                          child: Card(
-                            elevation: 4,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Upper Row in Left Column
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/mp_3.png',
-                                              fit: BoxFit.contain),
-                                        ),
-                                      ),
-                                      SizedBox(width: 8),
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/ssd_4.png',
-                                              fit: BoxFit.contain),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                            
-                                  // Lower Row in Left Column
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/ssd_1.png',
-                                              fit: BoxFit.contain),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              8), // Adjust the spacing between the containers
-                                      Expanded(
-                                        child: Container(
-                                          height: 100,
-                                          child: Image.asset(
-                                              'assets/ssd_4.png',
-                                              fit: BoxFit.contain),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    'Ssd & Rom',
-                                    style: TextStyle(
-                                      fontSize: 13,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    '\$${product['sale_price']}',
+                                    style: const TextStyle(
+                                      fontSize: 17,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 15),
-                        // Right Column
-                        Expanded(
-                          child: Card(
-                            elevation: 4,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: Container(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Upper Row in Right Column
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            height: 100,
-                                            child: Image.asset(
-                                                'assets/mp_4.png',
-                                                fit: BoxFit.cover),
-                                          ),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          child: Container(
-                                            height: 100,
-                                            child: Image.asset(
-                                                'assets/laptop_1.png',
-                                                fit: BoxFit.cover),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    // Lower Row in Right Column
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            height: 100,
-                                            child: Image.asset(
-                                                'assets/laptop_1.png',
-                                                fit: BoxFit.cover),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                            width:
-                                                8), // Adjust the spacing between the containers
-                                        Expanded(
-                                          child: Container(
-                                            height: 100,
-                                            child: Image.asset(
-                                                'assets/laptop_2.png',
-                                                fit: BoxFit.cover),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      'Graphics Card',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
                                 ),
-                              ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                 
-                  ],
-                ),
+                  ),
+
+                  Row(
+                    children: [
+                      const Text(
+                        'Categories',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Text(
+                        'See All',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                        child:  IconButton(onPressed: ( ) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CategoriesHomepage()),
+                          );
+                        }, icon: Icon(
+                          Icons.arrow_forward,
+                          size: 25,
+                          color: Colors.white,
+                        ),)
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 300,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: categoryBasedProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = categoryBasedProducts[index];
+
+                        // Check if product or product['product'] is null
+                        if (product == null || product['product'] == null) {
+                          return SizedBox(); // or another fallback widget or loading indicator
+                        }
+
+                        final imageUrl = product['product']['image'] != null && product['product']['image'].isNotEmpty
+                            ? 'https://sgitjobs.com/MaseryShoppingNew/public/${product['product']['image'][0]['path']}'
+                            : ''; // Provide a default value if image path is null or empty
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 200,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(15.0),
+                                    ),
+                                    image: imageUrl.isNotEmpty
+                                        ? DecorationImage(
+                                      image: NetworkImage(imageUrl),
+                                      fit: BoxFit.contain,
+                                    )
+                                        : null, // Handle empty image URL case
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    product['slug'] ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    '\$${product['sale_price'] ?? ''}',
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  // Featured Products Section
+                  Row(
+                    children: [
+                      const Text(
+                        'Our Best Collections',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Text(
+                        'See All',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(8.0),
+                        child: const Icon(
+                          Icons.arrow_forward,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 300,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: allProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = allProducts[index]['product'];
+                        final products = allProducts[index];
+                        final imageUrl = product['image'] != null && product['image'].isNotEmpty
+                            ? 'https://sgitjobs.com/MaseryShoppingNew/public/${product['image'][0]['path']}'
+                            : ''; // Provide a default value if image path is null or empty
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 200,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(15.0),
+                                    ),
+                                    image: imageUrl.isNotEmpty
+                                        ? DecorationImage(
+                                      image: NetworkImage(imageUrl),
+                                      fit: BoxFit.contain,
+                                    )
+                                        : null, // Handle empty image URL case
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    products['title'] ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    '\$${products['sale_price'] ?? ''}', // Use null-aware operator to handle null sale_price
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        'Recent Products',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Text(
+                        'See All',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(8.0),
+                        child: const Icon(
+                          Icons.arrow_forward,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 300,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: recentProducts.length,
+                      itemBuilder: (context, index) {
+                        final products = allProducts[index];
+                        final product = recentProducts[index]['product'];
+                        final imageUrl = product['image'] != null && product['image'].isNotEmpty
+                            ? 'https://sgitjobs.com/MaseryShoppingNew/public/${product['image'][0]['path']}'
+                            : ''; // Provide a default value if image path is null or empty
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 200,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(15.0),
+                                    ),
+                                    image: imageUrl.isNotEmpty
+                                        ? DecorationImage(
+                                      image: NetworkImage(imageUrl),
+                                      fit: BoxFit.contain,
+                                    )
+                                        : null, // Handle empty image URL case
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    products['title'] ?? '', // Use null-aware operator to handle null title
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    '\$${products['sale_price'] ?? ''}', // Use null-aware operator to handle null sale_price
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -989,7 +619,7 @@ class _HomePageState extends State<HomePage> {
           // Handle bottom bar tap if necessary
         },
         favoriteProducts:
-            mostpopular.where((product) => product['isFavorite']).toList(),
+        mostpopular.where((product) => product['isFavorite']).toList(),
       ),
     );
   }

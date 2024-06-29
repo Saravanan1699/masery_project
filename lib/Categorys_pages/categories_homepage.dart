@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:masery_project/Categorys_pages/Graphics_card.dart';
 import 'dart:convert';
 import '../Base_Url/BaseUrl.dart';
 import '../home.dart';
 import 'Categories.dart';
 import 'Categories_mobile.dart';
-import 'Graphics_card.dart';
 
 class CategoriesHomepage extends StatefulWidget {
   @override
@@ -47,10 +47,10 @@ class _CategoriesHomepageState extends State<CategoriesHomepage> {
         page = Categories();
         break;
       case 'HP':
-        page = Graphics_card();
+        page = GraphicsCard();
         break;
       case 'Samsung':
-        page = Graphics_card();
+        page = GraphicsCard();
         break;
       case 'Lenovo':
         page = Categories();
@@ -65,7 +65,7 @@ class _CategoriesHomepageState extends State<CategoriesHomepage> {
         page = Categories_mobile();
         break;
       default:
-        page = Categories(); // Default page if category doesn't match any case
+        page = Categories(); 
     }
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }

@@ -3,6 +3,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:masery_project/Categorys_pages/Graphics_card.dart';
+import 'package:masery_project/Categorys_pages/ourbest_product.dart';
+import 'package:masery_project/Categorys_pages/recent_product.dart';
 
 import 'Categorys_pages/categories_homepage.dart';
 import 'Settings/My_Profile.dart';
@@ -217,10 +220,14 @@ class _HomePageState extends State<HomePage> {
                   DotsIndicator(
                     dotsCount: banners.length,
                     position: _currentPage,
-                    decorator: const DotsDecorator(
-                      activeColor: Colors.blue,
-                      size: Size.square(8.0),
-                      activeSize: Size.square(8.0),
+                    decorator: DotsDecorator(
+                      color: Color(0xff0D6EFD),
+                      activeColor: Color(0xffF87265),
+                      size: Size.square(9.0),
+                      activeSize: Size(18.0, 9.0),
+                      spacing: EdgeInsets.symmetric(horizontal: 5.0),
+                      activeShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0)),
                     ),
                     onTap: (index) {
                       _pageController.animateToPage(
@@ -250,19 +257,22 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Container(
+                     Container(
                         decoration: const BoxDecoration(
                           color: Colors.blue,
                           shape: BoxShape.circle,
                         ),
-                        padding: const EdgeInsets.all(8.0),
-                        child: const Icon(
+                        child:  IconButton(onPressed: ( ) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => GraphicsCard()),
+                          );
+                        }, icon: Icon(
                           Icons.arrow_forward,
                           size: 25,
                           color: Colors.white,
-                        ),
-                      )
-                    ],
+                        ),)
+                      ) ],
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -442,19 +452,24 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Container(
+                          Container(
                         decoration: const BoxDecoration(
                           color: Colors.blue,
                           shape: BoxShape.circle,
                         ),
-                        padding: const EdgeInsets.all(8.0),
-                        child: const Icon(
+                        child:  IconButton(onPressed: ( ) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => OurbestproductList()),
+                          );
+                        }, icon: Icon(
                           Icons.arrow_forward,
                           size: 25,
                           color: Colors.white,
-                        ),
-                      )
-                    ],
+                        ),)
+                      ) ],
+                 
+                    
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -534,19 +549,23 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Container(
+                        Container(
                         decoration: const BoxDecoration(
                           color: Colors.blue,
                           shape: BoxShape.circle,
                         ),
-                        padding: const EdgeInsets.all(8.0),
-                        child: const Icon(
+                        child:  IconButton(onPressed: ( ) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Recentproduct()),
+                          );
+                        }, icon: Icon(
                           Icons.arrow_forward,
                           size: 25,
                           color: Colors.white,
-                        ),
-                      )
-                    ],
+                        ),)
+                      ) ],
+                 
                   ),
                   const SizedBox(height: 16),
                   Container(

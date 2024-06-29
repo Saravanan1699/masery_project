@@ -35,14 +35,14 @@ class Product {
   }
 }
 
-class GraphicsCard extends StatefulWidget {
-  const GraphicsCard({super.key});
+class Recentproduct extends StatefulWidget {
+  const Recentproduct({super.key});
 
   @override
-  State<GraphicsCard> createState() => _GraphicsCardState();
+  State<Recentproduct> createState() => _RecentproductState();
 }
 
-class _GraphicsCardState extends State<GraphicsCard> {
+class _RecentproductState extends State<Recentproduct> {
   TextEditingController _searchController = TextEditingController();
   FocusNode _focusNode = FocusNode();
   List<Product> featuredProducts = [];
@@ -67,7 +67,7 @@ class _GraphicsCardState extends State<GraphicsCard> {
       final response = await http.get(
           Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/homescreen'));
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body)['data']['featured_products'] as List;
+        final data = jsonDecode(response.body)['data']['recent_products'] as List;
         setState(() {
           featuredProducts = data.map((productJson) => Product.fromJson(productJson)).toList();
           isLoading = false;
@@ -90,7 +90,7 @@ class _GraphicsCardState extends State<GraphicsCard> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          'Featured product',
+          'Recent products',
           style: GoogleFonts.raleway(
           
             fontWeight: FontWeight.w700, // Regular weight for the description
@@ -112,7 +112,7 @@ class _GraphicsCardState extends State<GraphicsCard> {
                 ),
                 onPressed: () {
                   setState(() {
-                   Navigator.push(context,
+                    Navigator.push(context,
                         MaterialPageRoute(builder: (context) => HomePage()));
                   });
                 },

@@ -1,13 +1,13 @@
-import 'package:dots_indicator/dots_indicator.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:masery_project/Categorys_pages/your_cart.dart';
-import '../Multiple_stepform/step_form.dart';
-import 'Categories.dart';
-import '../bottombar.dart';
+import 'package:masery_project/Multiple_stepform/step_form.dart';
 
 class cartview extends StatefulWidget {
-  const cartview({super.key});
+  const cartview({Key? key}) : super(key: key);
 
   @override
   State<cartview> createState() => _cartviewState();
@@ -21,58 +21,18 @@ class _cartviewState extends State<cartview> {
   bool _isExpanded = false;
   List<Map<String, String>> cart = [];
   int cartCount = 0;
+  Product? product;
 
-  List<Map<String, String>> getProducts() {
-    return [
-      {
-        'image': 'assets/laptop.png',
-        'name':
-            'Acer Aspire Lite AMD Ryzen 5 5500U Premium Thin and Light Laptop (16 GB RAM/512 GB SSD/Windows 11 Home)',
-        'price': '\$300',
-      },
-      {
-        'image': 'assets/laptop_1.png',
-        'name':
-            'Apple 2023 MacBook Pro (16-inch, M3 Max chip with 16‑core CPU and 40‑core GPU, 48GB Unified Memory, 1TB)',
-        'price': '\$700',
-      },
-      {
-        'image': 'assets/laptop_2.png',
-        'name':
-            'ASUS VivoBook 15 (2021) Thin and Light Laptop, Dual Core Intel Celeron N4020, 15.6-inch (39.62 cm) HD, (4GB RAM/256GB SSD/Integrated Graphics) ',
-        'price': '\$120',
-      },
-      {
-        'image': 'assets/laptop.png',
-        'name':
-            'Lenovo IdeaPad Slim 1 AMD Ryzen 5 5500U 15.6" HD Thin and Light Laptop (16GB/512GB SSD/Windows ',
-        'price': '\$450',
-      },
-      {
-        'image': 'assets/laptop_1.png',
-        'name':
-            'HONOR MagicBook X16 (2024), 12th Gen Intel Core i5-12450H, 16-inch (40.64 cm) FHD ',
-        'price': '\$80',
-      },
-    ];
-  }
-
-  List<String> getBackgroundImages() {
-    return [
-      'assets/lenovo-lap.jpg',
-      'assets/lenovo-lap.jpg',
-      'assets/lenovo-lap.jpg',
-      'assets/lenovo-lap.jpg',
-    ];
-  }
-
-  List<String> getImagePaths() {
-    return [
-      'assets/Graphics.png',
-      'assets/mobile.png',
-      'assets/ssd.png',
-      'assets/Electronics.png',
-    ];
+  @override
+  void initState() {
+    super.initState();
+    fetchProduct().then((value) {
+      setState(() {
+        product = value;
+      });
+    }).catchError((error) {
+      print('Error fetching product: $error');
+    });
   }
 
   @override
@@ -97,24 +57,31 @@ class _cartviewState extends State<cartview> {
     });
   }
 
+  Future<Product> fetchProduct() async {
+    final response = await http.get(Uri.parse(
+        'https://sgitjobs.com/MaseryShoppingNew/public/api/get/product/samsung'));
+    if (response.statusCode == 200) {
+      return Product.fromJson(jsonDecode(response.body)['data']);
+    } else {
+      throw Exception('Failed to load product');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> products = getProducts();
-    List<String> backgroundImages = getBackgroundImages();
-    List<String> imagePaths = getImagePaths();
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          'Description',
+          product?.title ?? 'Description',
           style: GoogleFonts.raleway(
-            fontSize: screenWidth *
-                0.05, // Slightly smaller font size for the description
-            fontWeight: FontWeight.w700, // Regular weight for the description
+            fontSize: screenWidth * 0.05,
+            fontWeight: FontWeight.w700,
             color: Color(0xFF2B2B2B),
           ),
         ),
@@ -132,10 +99,7 @@ class _cartviewState extends State<cartview> {
                   size: 15,
                 ),
                 onPressed: () {
-                  setState(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Categories()));
-                  });
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => Categories()));
                 },
               ),
             );
@@ -182,65 +146,32 @@ class _cartviewState extends State<cartview> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              focusNode: _focusNode,
-              decoration: InputDecoration(
-                hintText: 'Search any Product...',
-                prefixIcon: Icon(Icons.search, color: Color(0xffBBBBBB)),
-                // suffixIcon: Icon(
-                //   Icons.mic,
-                //   color: Color(0xffBBBBBB),
-                // ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Color(0xffF2F2F2),
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
+      body: product == null
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Text(
-                          'Apple MacBook',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Text(
+                      product!.title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15.0),
-                        child: Text(
-                          // '-23% \$ 71,990',
-                          'In Stock',
-                          style: GoogleFonts.inter(
-                            // Using Google Fonts
-                            fontSize:
-                                screenWidth * 0.05, // Responsive font size
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF0FBC00),
-                          ),
-                        ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      'In Stock',
+                      style: GoogleFonts.inter(
+                        fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF0FBC00),
                       ),
-                    ],
+                    ),
                   ),
                   Stack(
                     children: [
@@ -251,7 +182,7 @@ class _cartviewState extends State<cartview> {
                           width: 350,
                           child: PageView.builder(
                             controller: _pageController,
-                            itemCount: backgroundImages.length,
+                            itemCount: product!.images.length,
                             onPageChanged: (int page) {
                               setState(() {
                                 _currentPage = page.toDouble();
@@ -269,9 +200,9 @@ class _cartviewState extends State<cartview> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(15.0),
                                       image: DecorationImage(
-                                        image:
-                                            AssetImage(backgroundImages[index]),
-                                        fit: BoxFit.cover,
+                                        image: NetworkImage(
+                                            product!.images[index]),
+                                        fit: BoxFit.contain,
                                       ),
                                     ),
                                   ),
@@ -283,54 +214,72 @@ class _cartviewState extends State<cartview> {
                       ),
                       SizedBox(height: 10),
                       Positioned(
-                          top: 0,
-                          left: 335,
-                          child: IconButton(
-                            onPressed: toggleFavorite,
-                            icon: Icon(
-                              isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: isFavorite ? Colors.red : null,
-                            ),
-                          )),
+                        top: 0,
+                        left: 300,
+                        child: IconButton(
+                          onPressed: toggleFavorite,
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : null,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                  DotsIndicator(
-                    dotsCount: imagePaths.length,
-                    position: _currentPage,
-                    decorator: DotsDecorator(
-                      color: Color(0xff0D6EFD),
-                      activeColor: Color(0xffF87265),
-                      size: Size.square(9.0),
-                      activeSize: Size(18.0, 9.0),
-                      spacing: EdgeInsets.symmetric(horizontal: 5.0),
-                      activeShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0)),
+                  Center(
+                    child: DotsIndicator(
+                      dotsCount: product!.images.length,
+                      position: _currentPage,
+                      decorator: DotsDecorator(
+                        color: Color(0xff0D6EFD),
+                        activeColor: Color(0xffF87265),
+                        size: Size.square(9.0),
+                        activeSize: Size(18.0, 9.0),
+                        spacing: EdgeInsets.symmetric(horizontal: 5.0),
+                        activeShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 15.0, top: 15),
                     child: Text(
-                      'Apple MacBook Air Laptop M1 chip, 13.3-inch/33.74 cm Retina'
-                      ' Display, 8GB RAM, 256GB SSD Storage, Backlit Keyboard,'
-                      ' FaceTime HD Camera, Touch ID. Works with '
-                      'iPhone/iPad; Space Grey',
+                      _isExpanded
+                          ? product!.description
+                          : '${product!.description.substring(0, 100)}...',
                       style: TextStyle(
-                          color: Color(0xff707B81),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500),
+                        color: Color(0xff707B81),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
+                  if (product!.description.length > 100)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _isExpanded = !_isExpanded;
+                          });
+                        },
+                        child: Text(
+                          _isExpanded ? 'Read Less' : 'Read More',
+                          style: TextStyle(
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ),
                   SizedBox(height: screenHeight * 0.02),
                   Padding(
                     padding: EdgeInsets.only(left: 15.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        // Sale Price
                         Text(
-                          '\$ 71,990',
+                          '\$ ${product!.salePrice.toStringAsFixed(2)}',
                           style: GoogleFonts.inter(
                             fontSize: screenWidth * 0.04,
                             fontWeight: FontWeight.w300,
@@ -338,12 +287,9 @@ class _cartviewState extends State<cartview> {
                             decoration: TextDecoration.lineThrough,
                           ),
                         ),
-                        SizedBox(
-                            width:
-                                10), // Adjust spacing between prices if needed
-                        // Purchase Price with Strikethrough
+                        SizedBox(width: 10),
                         Text(
-                          '\$ 65,000', // Example purchase price
+                          '\$ ${product!.offerPrice.toStringAsFixed(2)}',
                           style: GoogleFonts.inter(
                             fontSize: screenWidth * 0.05,
                             fontWeight: FontWeight.w700,
@@ -362,18 +308,22 @@ class _cartviewState extends State<cartview> {
                         ElevatedButton(
                           onPressed: () {
                             // Replace with actual product data
-                            Map<String, String> product = {
-                              'image': 'assets/laptop.png',
-                              'name':
-                                  'Acer Aspire Lite AMD Ryzen 5 5500U Premium Thin and Light Laptop (16 GB RAM/512 GB SSD/Windows 11 Home)',
-                              'price': '\$300',
+                            Map<String, String> productMap = {
+                              'image': product!.images.isNotEmpty
+                                  ? product!.images[0]
+                                  : 'assets/placeholder.png',
+                              'name': product!.title,
+                              'price':
+                                  '\$ ${product!.offerPrice.toStringAsFixed(2)}',
                             };
-                            addToCart(product);
+                            addToCart(productMap);
                           },
                           child: Text(
-                            'Add to cart',
+                            'Add to Cart',
                             style: TextStyle(
-                                color: Color(0xff0D6EFD), fontSize: 17),
+                              color: Color(0xff0D6EFD),
+                              fontSize: 17,
+                            ),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -384,15 +334,15 @@ class _cartviewState extends State<cartview> {
                             minimumSize: Size(150, 50),
                           ),
                         ),
-                        SizedBox(
-                          width: 15,
-                        ),
+                        SizedBox(width: 15),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MultistepForm()));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MultistepForm(),
+                              ),
+                            );
                           },
                           child: Text(
                             'Buy Now',
@@ -409,108 +359,85 @@ class _cartviewState extends State<cartview> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          'You may like',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Spacer(),
-                        Text(
-                          'View All',
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xff707B81)),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Icon(Icons.arrow_forward,
-                            size: 15, color: Color(0xff707B81)),
-                        SizedBox(
-                          width: 15,
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: 300,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: products.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 4,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: Container(
-                              width: 200,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    height: 150,
+                    Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Container(
+                          height: 250,
+                          width: 350,
+                          child: PageView.builder(
+                            controller: _pageController,
+                            itemCount: product!.images.length,
+                            onPageChanged: (int page) {
+                              setState(() {
+                                _currentPage = page.toDouble();
+                              });
+                            },
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Card(
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(15.0)),
+                                      borderRadius: BorderRadius.circular(15.0),
                                       image: DecorationImage(
-                                        image: AssetImage(
-                                            products[index]['image']!),
-                                        fit: BoxFit.cover,
+                                        image: NetworkImage(
+                                            product!.images[index]),
+                                        fit: BoxFit.contain,
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      products[index]['name']!,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
-                                    child: Text(
-                                      products[index]['price']!,
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                        ),
+                      ),
+                    
+               ],
               ),
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomBar(
-        onTap: (index) {
-          setState(() {});
-        },
-        favoriteProducts: [],
-      ),
+    );
+  }
+}
+
+class Product {
+  int id;
+  String title;
+  String description;
+  String brand;
+  double salePrice;
+  double offerPrice;
+  List<String> images;
+
+  Product({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.brand,
+    required this.salePrice,
+    required this.offerPrice,
+    required this.images,
+  });
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    var images = json['product']['image'] as List;
+    List<String> imageList = images
+        .map(
+            (i) => 'https://sgitjobs.com/MaseryShoppingNew/public/${i['path']}')
+        .toList();
+
+    return Product(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      brand: json['product']['brand'],
+      salePrice: double.parse(json['sale_price']),
+      offerPrice: double.parse(json['offer_price']),
+      images: imageList,
     );
   }
 }

@@ -6,7 +6,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:masery_project/Categorys_pages/Graphics_card.dart';
 import 'package:masery_project/Categorys_pages/ourbest_product.dart';
 import 'package:masery_project/Categorys_pages/recent_product.dart';
-
+import 'package:masery_project/featureddes.dart';
 import 'Categorys_pages/categories_homepage.dart';
 import 'Settings/My_Profile.dart';
 import 'bottombar.dart';
@@ -257,21 +257,21 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         width: 10,
                       ),
-                     Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                        child:  IconButton(onPressed: ( ) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => GraphicsCard()),
-                          );
-                        }, icon: Icon(
-                          Icons.arrow_forward,
-                          size: 25,
-                          color: Colors.white,
-                        ),)
+                      Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child:  IconButton(onPressed: ( ) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => GraphicsCard()),
+                            );
+                          }, icon: Icon(
+                            Icons.arrow_forward,
+                            size: 25,
+                            color: Colors.white,
+                          ),)
                       ) ],
                   ),
                   const SizedBox(height: 16),
@@ -284,45 +284,138 @@ class _HomePageState extends State<HomePage> {
                         final product = featuredProducts[index];
                         final imageUrl = 'https://sgitjobs.com/MaseryShoppingNew/public/${product['product']['image'][0]['path']}';
 
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: 200,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 150,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(15.0)),
-                                    image: DecorationImage(
-                                      image: NetworkImage(imageUrl),
-                                      fit: BoxFit.contain,
-                                    ),
+                        final offerStart = DateTime.parse(product['offer_start']);
+                        final offerEnd = DateTime.parse(product['offer_end']);
+                        final currentDate = DateTime.now();
+
+                        final bool isOfferPeriod = currentDate.isAfter(offerStart) && currentDate.isBefore(offerEnd);
+                        final salePrice = double.parse(product['sale_price']);
+                        final offerPrice = double.parse(product['offer_price']);
+
+                        final double discountPercentage = ((salePrice - offerPrice) / salePrice) * 100;
+
+                        final int discountPercentageRounded = discountPercentage.ceil();
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetail(product: product),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: 200,
+                              child: Stack(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 150,
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.vertical(
+                                            top: Radius.circular(15.0),
+                                          ),
+                                          image: DecorationImage(
+                                            image: NetworkImage(imageUrl),
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          product['title'],
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            if (isOfferPeriod) ...[
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    '\$$salePrice',
+                                                    style: const TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.normal,
+                                                      decoration: TextDecoration.lineThrough,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(
+                                                    '\$$offerPrice',
+                                                    style: const TextStyle(
+                                                      fontSize: 17,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ] else ...[
+                                              Text(
+                                                '\$$salePrice',
+                                                style: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    product['title'],
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.normal,
+                                  if (isOfferPeriod)
+                                    Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.orangeAccent,
+                                          borderRadius: BorderRadius.circular(30.0),
+                                        ),
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '$discountPercentageRounded%',
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Text(
+                                              'OFF',
+                                              style: const TextStyle(
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text(
-                                    '\$${product['sale_price']}',
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -349,20 +442,20 @@ class _HomePageState extends State<HomePage> {
                         width: 10,
                       ),
                       Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                        child:  IconButton(onPressed: ( ) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => CategoriesHomepage()),
-                          );
-                        }, icon: Icon(
-                          Icons.arrow_forward,
-                          size: 25,
-                          color: Colors.white,
-                        ),)
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child:  IconButton(onPressed: ( ) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => CategoriesHomepage()),
+                            );
+                          }, icon: Icon(
+                            Icons.arrow_forward,
+                            size: 25,
+                            color: Colors.white,
+                          ),)
                       )
                     ],
                   ),
@@ -373,15 +466,16 @@ class _HomePageState extends State<HomePage> {
                       scrollDirection: Axis.horizontal,
                       itemCount: categoryBasedProducts.length,
                       itemBuilder: (context, index) {
-                        final product = categoryBasedProducts[index];
+                        final category = categoryBasedProducts[index];
+                        final products = category['products'];
 
-                        // Check if product or product['product'] is null
-                        if (product == null || product['product'] == null) {
-                          return SizedBox(); // or another fallback widget or loading indicator
+                        if (products == null || products.isEmpty) {
+                          return SizedBox();
                         }
 
-                        final imageUrl = product['product']['image'] != null && product['product']['image'].isNotEmpty
-                            ? 'https://sgitjobs.com/MaseryShoppingNew/public/${product['product']['image'][0]['path']}'
+                        final firstProduct = products[0];
+                        final imageUrl = firstProduct['image'] != null && firstProduct['image'].isNotEmpty
+                            ? 'https://sgitjobs.com/MaseryShoppingNew/public/${firstProduct['image'][0]['path']}'
                             : ''; // Provide a default value if image path is null or empty
 
                         return Padding(
@@ -405,23 +499,30 @@ class _HomePageState extends State<HomePage> {
                                         : null, // Handle empty image URL case
                                   ),
                                 ),
+                                Container(
+                                  child: Column(
+                                    children: [
+
+                                    ],
+                                  ),
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    product['slug'] ?? '',
+                                    category['name'] ?? '',
                                     style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.normal,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                   child: Text(
-                                    '\$${product['sale_price'] ?? ''}',
+                                    ' ${category['products_count'] ?? ''} Products',
                                     style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal,
                                     ),
                                   ),
                                 ),
@@ -452,24 +553,24 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         width: 10,
                       ),
-                          Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                        child:  IconButton(onPressed: ( ) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => OurbestproductList()),
-                          );
-                        }, icon: Icon(
-                          Icons.arrow_forward,
-                          size: 25,
-                          color: Colors.white,
-                        ),)
+                      Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child:  IconButton(onPressed: ( ) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => OurbestproductList()),
+                            );
+                          }, icon: Icon(
+                            Icons.arrow_forward,
+                            size: 25,
+                            color: Colors.white,
+                          ),)
                       ) ],
-                 
-                    
+
+
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -478,59 +579,156 @@ class _HomePageState extends State<HomePage> {
                       scrollDirection: Axis.horizontal,
                       itemCount: allProducts.length,
                       itemBuilder: (context, index) {
-                        final product = allProducts[index]['product'];
-                        final products = allProducts[index];
+                        final product = allProducts[index]['product'] ?? {};
+                        final products = allProducts[index] ?? {};
                         final imageUrl = product['image'] != null && product['image'].isNotEmpty
                             ? 'https://sgitjobs.com/MaseryShoppingNew/public/${product['image'][0]['path']}'
                             : ''; // Provide a default value if image path is null or empty
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: 200,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 150,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(15.0),
+                        final offerStart = products['offer_start'] != null ? DateTime.parse(products['offer_start']) : DateTime.now();
+                        final offerEnd = products['offer_end'] != null ? DateTime.parse(products['offer_end']) : DateTime.now();
+                        final currentDate = DateTime.now();
+
+                        final bool isOfferPeriod = currentDate.isAfter(offerStart) && currentDate.isBefore(offerEnd);
+                        final salePrice = double.tryParse(products['sale_price']?.toString() ?? '0') ?? 0.0;
+                        final offerPrice = double.tryParse(products['offer_price']?.toString() ?? '0') ?? 0.0;
+
+                        final double discountPercentage = ((salePrice - offerPrice) / salePrice) * 100;
+
+                        final int discountPercentageRounded = discountPercentage.ceil();
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetail(product: product),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: 200,
+                              child: Stack(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 150,
+                                          decoration: BoxDecoration(
+                                            borderRadius: const BorderRadius.vertical(
+                                              top: Radius.circular(15.0),
+                                            ),
+                                            image: imageUrl.isNotEmpty
+                                                ? DecorationImage(
+                                              image: NetworkImage(imageUrl),
+                                              fit: BoxFit.contain,
+                                            )
+                                                : null, // Handle empty image URL case
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            products['title'] ?? '',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              if (isOfferPeriod) ...[
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '\$$salePrice',
+                                                      style: const TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight: FontWeight.normal,
+                                                        decoration: TextDecoration.lineThrough,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(
+                                                      '\$$offerPrice',
+                                                      style: const TextStyle(
+                                                        fontSize: 17,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ] else ...[
+                                                Text(
+                                                  '\$$salePrice',
+                                                  style: const TextStyle(
+                                                    fontSize: 17,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    image: imageUrl.isNotEmpty
-                                        ? DecorationImage(
-                                      image: NetworkImage(imageUrl),
-                                      fit: BoxFit.contain,
-                                    )
-                                        : null, // Handle empty image URL case
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    products['title'] ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text(
-                                    '\$${products['sale_price'] ?? ''}', // Use null-aware operator to handle null sale_price
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                    if (isOfferPeriod)
+                                      Positioned(
+                                        top: 0,
+                                        left: 0,
+                                        child: Container(
+                                            height: 40,
+                                            width: 40,
+                                            decoration: BoxDecoration(
+                                              color: Colors.orangeAccent,
+                                              borderRadius: BorderRadius.circular(30.0),
+                                            ),                                      padding: const EdgeInsets.all(4.0),
+                                            child:Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      '$discountPercentageRounded%',
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'OFF',
+                                                      style: const TextStyle(
+                                                        fontSize: 9,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            )
+                                        ),
+                                      ),
+
+                                  ]
+
+                              ),
                             ),
                           ),
                         );
                       },
                     ),
-                  ),
+                  )
+                  ,
                   Row(
                     children: [
                       const Text(
@@ -549,23 +747,23 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         width: 10,
                       ),
-                        Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                        child:  IconButton(onPressed: ( ) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => Recentproduct()),
-                          );
-                        }, icon: Icon(
-                          Icons.arrow_forward,
-                          size: 25,
-                          color: Colors.white,
-                        ),)
+                      Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child:  IconButton(onPressed: ( ) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Recentproduct()),
+                            );
+                          }, icon: Icon(
+                            Icons.arrow_forward,
+                            size: 25,
+                            color: Colors.white,
+                          ),)
                       ) ],
-                 
+
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -579,48 +777,133 @@ class _HomePageState extends State<HomePage> {
                         final imageUrl = product['image'] != null && product['image'].isNotEmpty
                             ? 'https://sgitjobs.com/MaseryShoppingNew/public/${product['image'][0]['path']}'
                             : ''; // Provide a default value if image path is null or empty
+                        final offerStart = products['offer_start'] != null ? DateTime.parse(products['offer_start']) : DateTime.now();
+                        final offerEnd = products['offer_end'] != null ? DateTime.parse(products['offer_end']) : DateTime.now();
+                        final currentDate = DateTime.now();
+
+                        final bool isOfferPeriod = currentDate.isAfter(offerStart) && currentDate.isBefore(offerEnd);
+                        final salePrice = double.tryParse(products['sale_price']?.toString() ?? '0') ?? 0.0;
+                        final offerPrice = double.tryParse(products['offer_price']?.toString() ?? '0') ?? 0.0;
+
+                        final double discountPercentage = ((salePrice - offerPrice) / salePrice) * 100;
+
+                        final int discountPercentageRounded = discountPercentage.ceil();
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
                             width: 200,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 150,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(15.0),
-                                    ),
-                                    image: imageUrl.isNotEmpty
-                                        ? DecorationImage(
-                                      image: NetworkImage(imageUrl),
-                                      fit: BoxFit.contain,
-                                    )
-                                        : null, // Handle empty image URL case
+                            child: Stack(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 150,
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.vertical(
+                                            top: Radius.circular(15.0),
+                                          ),
+                                          image: imageUrl.isNotEmpty
+                                              ? DecorationImage(
+                                            image: NetworkImage(imageUrl),
+                                            fit: BoxFit.contain,
+                                          )
+                                              : null, // Handle empty image URL case
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          products['title'] ?? '', // Use null-aware operator to handle null title
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            if (isOfferPeriod) ...[
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    '\$$salePrice',
+                                                    style: const TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.normal,
+                                                      decoration: TextDecoration.lineThrough,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(
+                                                    '\$$offerPrice',
+                                                    style: const TextStyle(
+                                                      fontSize: 17,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+
+                                            ] else ...[
+                                              Text(
+                                                '\$$salePrice',
+                                                style: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    products['title'] ?? '', // Use null-aware operator to handle null title
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.normal,
+                                  if (isOfferPeriod)
+                                    Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      child: Container(
+                                          height: 40,
+                                          width: 40,
+                                          decoration: BoxDecoration(
+                                            color: Colors.orangeAccent,
+                                            borderRadius: BorderRadius.circular(30.0),
+                                          ),                                      padding: const EdgeInsets.all(4.0),
+                                          child:Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Text(
+                                                    '$discountPercentageRounded%',
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'OFF',
+                                                    style: const TextStyle(
+                                                      fontSize: 9,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          )
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text(
-                                    '\$${products['sale_price'] ?? ''}', // Use null-aware operator to handle null sale_price
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                ]
+
                             ),
                           ),
                         );

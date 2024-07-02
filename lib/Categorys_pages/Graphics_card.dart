@@ -48,6 +48,7 @@ class _GraphicsCardState extends State<GraphicsCard> {
   List<Product> featuredProducts = [];
   bool isLoading = true;
   bool hasError = false;
+  int totalItems = 0;
 
   @override
   void dispose() {
@@ -60,6 +61,7 @@ class _GraphicsCardState extends State<GraphicsCard> {
   void initState() {
     super.initState();
     fetchFeaturedProducts();
+    fetchTotalItems();
   }
 
   Future<void> fetchFeaturedProducts() async {
@@ -80,6 +82,18 @@ class _GraphicsCardState extends State<GraphicsCard> {
         isLoading = false;
         hasError = true;
       });
+    }
+  }
+
+  Future<void> fetchTotalItems() async {
+    final response = await http.get(Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/totalitems'));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        totalItems = int.parse(data['total_items']);
+      });
+    } else {
+      throw Exception('Failed to load total items');
     }
   }
 
@@ -123,7 +137,6 @@ class _GraphicsCardState extends State<GraphicsCard> {
         actions: [
           GestureDetector(
             onTap: () {
-             
             },
             child: Stack(
               children: [
@@ -138,6 +151,7 @@ class _GraphicsCardState extends State<GraphicsCard> {
                     backgroundColor: Colors.blue,
                   ),
                 ),
+                if (totalItems > 0)
                   Positioned(
                     right: 4,
                     top: 4,
@@ -145,7 +159,7 @@ class _GraphicsCardState extends State<GraphicsCard> {
                       radius: 8,
                       backgroundColor: Colors.red,
                       child: Text(
-                        '',
+                        '$totalItems',
                         style: TextStyle(fontSize: 12, color: Colors.white),
                       ),
                     ),
@@ -322,17 +336,17 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                widget.imagePath1.isNotEmpty 
-                  ? Image.network(
-                      widget.imagePath1,
-                      height: widget.screenHeight * 0.25,
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Placeholder(fallbackHeight: widget.screenHeight * 0.25);
-                      },
-                    )
-                  : Placeholder(fallbackHeight: widget.screenHeight * 0.25),
+                widget.imagePath1.isNotEmpty
+                    ? Image.network(
+                  widget.imagePath1,
+                  height: widget.screenHeight * 0.25,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Placeholder(fallbackHeight: widget.screenHeight * 0.25);
+                  },
+                )
+                    : Placeholder(fallbackHeight: widget.screenHeight * 0.25),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(widget.brand1, style: widget.commonTextStyle),
@@ -349,6 +363,26 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(widget.price1, style: TextStyle(fontSize: widget.screenWidth * 0.035, fontWeight: FontWeight.bold)),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Handle the add to cart action here
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Added to Cart!')),
+                      );
+                    },
+                    child: Text('Add to Cart'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -359,17 +393,17 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                widget.imagePath2.isNotEmpty 
-                  ? Image.network(
-                      widget.imagePath2,
-                      height: widget.screenHeight * 0.25,
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Placeholder(fallbackHeight: widget.screenHeight * 0.25);
-                      },
-                    )
-                  : Placeholder(fallbackHeight: widget.screenHeight * 0.25),
+                widget.imagePath2.isNotEmpty
+                    ? Image.network(
+                  widget.imagePath2,
+                  height: widget.screenHeight * 0.25,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Placeholder(fallbackHeight: widget.screenHeight * 0.25);
+                  },
+                )
+                    : Placeholder(fallbackHeight: widget.screenHeight * 0.25),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(widget.brand2, style: widget.commonTextStyle),
@@ -385,6 +419,26 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(widget.price2, style: TextStyle(fontSize: widget.screenWidth * 0.035, fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  child: TextButton(
+                    onPressed: () {
+                      // Handle the add to cart action here
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Added to Cart!')),
+                      );
+                    },
+                    child: Text('Add to Cart'),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -417,5 +471,5 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
       ],
     );
   }
-
 }
+

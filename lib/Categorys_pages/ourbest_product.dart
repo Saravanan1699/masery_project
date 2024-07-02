@@ -22,14 +22,16 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    var images = json['product']['image'] as List;
-    List<String> imageList = images.map((i) => 'https://sgitjobs.com/MaseryShoppingNew/public/${i['path']}').toList();
+    var images = json['product']?['image'] as List? ?? [];
+    List<String> imageList = images.isNotEmpty 
+        ? images.map((i) => 'https://sgitjobs.com/MaseryShoppingNew/public/${i['path'] ?? ''}').toList()
+        : [];
     return Product(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      salePrice: double.parse(json['sale_price']),
-      offerPrice: double.parse(json['offer_price']),
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      salePrice: json['sale_price'] != null ? double.tryParse(json['sale_price'].toString()) ?? 0.0 : 0.0,
+      offerPrice: json['offer_price'] != null ? double.tryParse(json['offer_price'].toString()) ?? 0.0 : 0.0,
       imagePaths: imageList,
     );
   }
@@ -90,9 +92,8 @@ class _OurbestproductListState extends State<OurbestproductList> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          'Our Best  product',
+          'Our Best product',
           style: GoogleFonts.raleway(
-          
             fontWeight: FontWeight.w700, 
             color: Color(0xFF2B2B2B),
           ),
@@ -111,10 +112,8 @@ class _OurbestproductListState extends State<OurbestproductList> {
                   size: 15,
                 ),
                 onPressed: () {
-                  setState(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomePage()));
-                  });
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomePage()));
                 },
               ),
             );
@@ -417,5 +416,4 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
       ],
     );
   }
-
 }

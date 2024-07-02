@@ -66,6 +66,7 @@ class _cartviewState extends State<cartview> {
       throw Exception('Failed to load product');
     }
   }
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -306,17 +307,49 @@ class _cartviewState extends State<cartview> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            // Replace with actual product data
+                          onPressed: () async {
+                            // Define product data directly
                             Map<String, String> productMap = {
-                              'image': product!.images.isNotEmpty
-                                  ? product!.images[0]
-                                  : 'assets/placeholder.png',
-                              'name': product!.title,
-                              'price':
-                                  '\$ ${product!.offerPrice.toStringAsFixed(2)}',
+                              'image': 'https://example.com/image.png',
+                              'name': 'Example Product',
+                              'price': '\$29.99',
                             };
-                            addToCart(productMap);
+
+                            // Function to add the product to the cart
+                            Future<void> addToCart(Map<String, String> product) async {
+                              final url = Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/addToCart/acer');
+                              final response = await http.post(
+                                url,
+                                headers: {'Content-Type': 'application/json'},
+                                body: jsonEncode(product),
+                              );
+
+                              // Log the status code and response body for debugging
+                              print('Status Code: ${response.statusCode}');
+                              print('Response Body: ${response.body}');
+
+                              if (response.statusCode == 200) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Product added to cart successfully')),
+                                );
+                              } else if (response.statusCode == 402) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('This item is already in the cart')),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Failed to add product to cart')),
+                                );
+                              }
+                            }
+
+                            try {
+                              await addToCart(productMap);
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('An error occurred: $e')),
+                              );
+                            }
                           },
                           child: Text(
                             'Add to Cart',
@@ -359,45 +392,43 @@ class _cartviewState extends State<cartview> {
                       ],
                     ),
                   ),
-                    Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Container(
-                          height: 250,
-                          width: 350,
-                          child: PageView.builder(
-                            controller: _pageController,
-                            itemCount: product!.images.length,
-                            onPageChanged: (int page) {
-                              setState(() {
-                                _currentPage = page.toDouble();
-                              });
-                            },
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Card(
-                                  elevation: 4,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            product!.images[index]),
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Container(
+                      height: 250,
+                      width: 350,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: product!.images.length,
+                        onPageChanged: (int page) {
+                          setState(() {
+                            _currentPage = page.toDouble();
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Card(
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  image: DecorationImage(
+                                    image: NetworkImage(product!.images[index]),
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    
-               ],
+                    ),
+                  ),
+                ],
               ),
             ),
     );

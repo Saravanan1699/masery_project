@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:masery_project/bottombar.dart';
+import 'package:masery_project/cartpage.dart';
 import 'home.dart';
 
 class Cart extends StatefulWidget {
@@ -72,7 +73,7 @@ class _CartState extends State<Cart> {
             SizedBox(height: screenHeight * 0.4),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xff0D6EFD),

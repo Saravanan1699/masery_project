@@ -214,17 +214,17 @@ class _cartviewState extends State<cartview> {
                         ),
                       ),
                       SizedBox(height: 10),
-                      Positioned(
-                        top: 0,
-                        left: 300,
-                        child: IconButton(
-                          onPressed: toggleFavorite,
-                          icon: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.red : null,
-                          ),
-                        ),
-                      ),
+                      // Positioned(
+                      //   top: 0,
+                      //   left: 300,
+                      //   child: IconButton(
+                      //     onPressed: toggleFavorite,
+                      //     icon: Icon(
+                      //       isFavorite ? Icons.favorite : Icons.favorite_border,
+                      //       color: isFavorite ? Colors.red : null,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                   Center(
@@ -373,7 +373,7 @@ class _cartviewState extends State<cartview> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MultistepForm(),
+                                builder: (context) => MultistepForm(product: {},),
                               ),
                             );
                           },

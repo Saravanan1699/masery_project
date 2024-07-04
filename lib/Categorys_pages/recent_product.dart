@@ -22,8 +22,11 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    var images = json['product']['image'] as List;
-    List<String> imageList = images.map((i) => 'https://sgitjobs.com/MaseryShoppingNew/public/${i['path']}').toList();
+    var images = json['image'] as List<dynamic>?;
+    List<String> imageList = images != null
+        ? images.map((i) => 'https://sgitjobs.com/MaseryShoppingNew/public/${i['path']}').toList()
+        : [];
+
     return Product(
       id: json['id'],
       title: json['title'],
@@ -35,19 +38,20 @@ class Product {
   }
 }
 
-class Recentproduct extends StatefulWidget {
-  const Recentproduct({super.key});
+class GraphicsCard1 extends StatefulWidget {
+  const GraphicsCard1({super.key});
 
   @override
-  State<Recentproduct> createState() => _RecentproductState();
+  State<GraphicsCard1> createState() => _GraphicsCard1State();
 }
 
-class _RecentproductState extends State<Recentproduct> {
+class _GraphicsCard1State extends State<GraphicsCard1> {
   TextEditingController _searchController = TextEditingController();
   FocusNode _focusNode = FocusNode();
   List<Product> featuredProducts = [];
   bool isLoading = true;
   bool hasError = false;
+  int totalItems = 0;
 
   @override
   void dispose() {
@@ -60,26 +64,45 @@ class _RecentproductState extends State<Recentproduct> {
   void initState() {
     super.initState();
     fetchFeaturedProducts();
+    fetchTotalItems();
   }
 
   Future<void> fetchFeaturedProducts() async {
     try {
-      final response = await http.get(
-          Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/homescreen'));
+      final response = await http.get(Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/homescreen'));
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body)['data']['recent_products'] as List;
+        final responseBody = response.body;
+        print("Response body: $responseBody"); // Debugging line
+        final data = jsonDecode(response.body)['data']['featured_products'] as List;
         setState(() {
           featuredProducts = data.map((productJson) => Product.fromJson(productJson)).toList();
           isLoading = false;
         });
       } else {
-        throw Exception('Failed to load featured products');
+        print("Failed with status code: ${response.statusCode}"); // Debugging line
+        setState(() {
+          isLoading = false;
+          hasError = true;
+        });
       }
     } catch (e) {
+      print("Error: $e"); // Debugging line
       setState(() {
         isLoading = false;
         hasError = true;
       });
+    }
+  }
+
+  Future<void> fetchTotalItems() async {
+    final response = await http.get(Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/totalitems'));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        totalItems = int.parse(data['total_items']);
+      });
+    } else {
+      throw Exception('Failed to load total items');
     }
   }
 
@@ -90,9 +113,8 @@ class _RecentproductState extends State<Recentproduct> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          'Recent products',
+          'Recent product',
           style: GoogleFonts.raleway(
-          
             fontWeight: FontWeight.w700, // Regular weight for the description
             color: Color(0xFF2B2B2B),
           ),
@@ -112,8 +134,7 @@ class _RecentproductState extends State<Recentproduct> {
                 ),
                 onPressed: () {
                   setState(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomePage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
                   });
                 },
               ),
@@ -122,9 +143,7 @@ class _RecentproductState extends State<Recentproduct> {
         ),
         actions: [
           GestureDetector(
-            onTap: () {
-             
-            },
+            onTap: () {},
             child: Stack(
               children: [
                 Padding(
@@ -138,6 +157,7 @@ class _RecentproductState extends State<Recentproduct> {
                     backgroundColor: Colors.blue,
                   ),
                 ),
+                if (totalItems > 0)
                   Positioned(
                     right: 4,
                     top: 4,
@@ -145,7 +165,7 @@ class _RecentproductState extends State<Recentproduct> {
                       radius: 8,
                       backgroundColor: Colors.red,
                       child: Text(
-                        '',
+                        '$totalItems',
                         style: TextStyle(fontSize: 12, color: Colors.white),
                       ),
                     ),
@@ -155,7 +175,6 @@ class _RecentproductState extends State<Recentproduct> {
           ),
         ],
       ),
-    
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : hasError
@@ -249,22 +268,28 @@ class _RecentproductState extends State<Recentproduct> {
                                     SizedBox(width: 15)
                                   ],
                                 ),
-                                ...featuredProducts.map((product) => Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: ResponsiveCardRow(
-                                    screenWidth: screenWidth,
-                                    screenHeight: screenHeight,
-                                    commonTextStyle: commonTextStyle,
-                                    imagePath1: product.imagePaths.isNotEmpty ? product.imagePaths[0] : '',
-                                    brand1: product.title,
-                                    description1: product.description,
-                                    price1: '\$${product.salePrice}',
-                                    imagePath2: product.imagePaths.length > 1 ? product.imagePaths[1] : '',
-                                    brand2: product.title,
-                                    description2: product.description,
-                                    price2: '\$${product.offerPrice}',
-                                  ),
-                                )).toList()
+                                ...featuredProducts
+                                    .map((product) => Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: ResponsiveCardRow(
+                                            screenWidth: screenWidth,
+                                            screenHeight: screenHeight,
+                                            commonTextStyle: commonTextStyle,
+                                            imagePath1: product.imagePaths.isNotEmpty
+                                                ? product.imagePaths[0]
+                                                : '',
+                                            brand1: product.title,
+                                            description1: product.description,
+                                            price1: '\$${product.salePrice}',
+                                            imagePath2: product.imagePaths.length > 1
+                                                ? product.imagePaths[1]
+                                                : '',
+                                            brand2: product.title,
+                                            description2: product.description,
+                                            price2: '\$${product.offerPrice}',
+                                          ),
+                                        ))
+                                    .toList()
                               ],
                             ),
                           ),
@@ -322,17 +347,17 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                widget.imagePath1.isNotEmpty 
-                  ? Image.network(
-                      widget.imagePath1,
-                      height: widget.screenHeight * 0.25,
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Placeholder(fallbackHeight: widget.screenHeight * 0.25);
-                      },
-                    )
-                  : Placeholder(fallbackHeight: widget.screenHeight * 0.25),
+                widget.imagePath1.isNotEmpty
+                    ? Image.network(
+                        widget.imagePath1,
+                        height: widget.screenHeight * 0.25,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Placeholder(fallbackHeight: widget.screenHeight * 0.25);
+                        },
+                      )
+                    : Placeholder(fallbackHeight: widget.screenHeight * 0.25),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(widget.brand1, style: widget.commonTextStyle),
@@ -349,6 +374,25 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(widget.price1, style: TextStyle(fontSize: widget.screenWidth * 0.035, fontWeight: FontWeight.bold)),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Added to Cart!')),
+                      );
+                    },
+                    child: Text('Add to Cart'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -359,17 +403,17 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                widget.imagePath2.isNotEmpty 
-                  ? Image.network(
-                      widget.imagePath2,
-                      height: widget.screenHeight * 0.25,
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Placeholder(fallbackHeight: widget.screenHeight * 0.25);
-                      },
-                    )
-                  : Placeholder(fallbackHeight: widget.screenHeight * 0.25),
+                widget.imagePath2.isNotEmpty
+                    ? Image.network(
+                        widget.imagePath2,
+                        height: widget.screenHeight * 0.25,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Placeholder(fallbackHeight: widget.screenHeight * 0.25);
+                        },
+                      )
+                    : Placeholder(fallbackHeight: widget.screenHeight * 0.25),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(widget.brand2, style: widget.commonTextStyle),
@@ -385,6 +429,25 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(widget.price2, style: TextStyle(fontSize: widget.screenWidth * 0.035, fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  child: TextButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Added to Cart!')),
+                      );
+                    },
+                    child: Text('Add to Cart'),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -406,7 +469,7 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
           maxLines: maxLines,
           overflow: overflow,
         ),
-        if (description.length > 100) // Adjust the length threshold as needed
+        if (description.length > 100)
           InkWell(
             onTap: onReadMore,
             child: Text(
@@ -417,5 +480,4 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
       ],
     );
   }
-
 }

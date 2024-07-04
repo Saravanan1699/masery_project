@@ -23,7 +23,10 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     var images = json['product']['image'] as List;
-    List<String> imageList = images.map((i) => 'https://sgitjobs.com/MaseryShoppingNew/public/${i['path']}').toList();
+    List<String> imageList = images
+        .map(
+            (i) => 'https://sgitjobs.com/MaseryShoppingNew/public/${i['path']}')
+        .toList();
     return Product(
       id: json['id'],
       title: json['title'],
@@ -66,12 +69,14 @@ class _GraphicsCardState extends State<GraphicsCard> {
 
   Future<void> fetchFeaturedProducts() async {
     try {
-      final response = await http.get(
-          Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/homescreen'));
+      final response = await http.get(Uri.parse(
+          'https://sgitjobs.com/MaseryShoppingNew/public/api/homescreen'));
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body)['data']['featured_products'] as List;
+        final data =
+            jsonDecode(response.body)['data']['featured_products'] as List;
         setState(() {
-          featuredProducts = data.map((productJson) => Product.fromJson(productJson)).toList();
+          featuredProducts =
+              data.map((productJson) => Product.fromJson(productJson)).toList();
           isLoading = false;
         });
       } else {
@@ -86,7 +91,8 @@ class _GraphicsCardState extends State<GraphicsCard> {
   }
 
   Future<void> fetchTotalItems() async {
-    final response = await http.get(Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/totalitems'));
+    final response = await http.get(Uri.parse(
+        'https://sgitjobs.com/MaseryShoppingNew/public/api/totalitems'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
@@ -106,7 +112,6 @@ class _GraphicsCardState extends State<GraphicsCard> {
         title: Text(
           'Featured product',
           style: GoogleFonts.raleway(
-          
             fontWeight: FontWeight.w700, // Regular weight for the description
             color: Color(0xFF2B2B2B),
           ),
@@ -126,7 +131,7 @@ class _GraphicsCardState extends State<GraphicsCard> {
                 ),
                 onPressed: () {
                   setState(() {
-                   Navigator.push(context,
+                    Navigator.push(context,
                         MaterialPageRoute(builder: (context) => HomePage()));
                   });
                 },
@@ -136,8 +141,7 @@ class _GraphicsCardState extends State<GraphicsCard> {
         ),
         actions: [
           GestureDetector(
-            onTap: () {
-            },
+            onTap: () {},
             child: Stack(
               children: [
                 Padding(
@@ -169,7 +173,6 @@ class _GraphicsCardState extends State<GraphicsCard> {
           ),
         ],
       ),
-    
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : hasError
@@ -194,7 +197,8 @@ class _GraphicsCardState extends State<GraphicsCard> {
                             focusNode: _focusNode,
                             decoration: InputDecoration(
                               hintText: 'Search any Product...',
-                              prefixIcon: Icon(Icons.search, color: Color(0xffBBBBBB)),
+                              prefixIcon:
+                                  Icon(Icons.search, color: Color(0xffBBBBBB)),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15.0),
                                 borderSide: BorderSide.none,
@@ -226,17 +230,20 @@ class _GraphicsCardState extends State<GraphicsCard> {
                                       elevation: 4,
                                       color: Colors.white,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10.0),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
                                       ),
                                       child: SizedBox(
                                         height: 30.0,
                                         width: 85.0,
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text('Sort'),
                                             SizedBox(width: 8.0),
-                                            Icon(Icons.filter_list_outlined, color: Colors.black),
+                                            Icon(Icons.filter_list_outlined,
+                                                color: Colors.black),
                                           ],
                                         ),
                                       ),
@@ -245,17 +252,20 @@ class _GraphicsCardState extends State<GraphicsCard> {
                                       color: Colors.white,
                                       elevation: 4,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10.0),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
                                       ),
                                       child: SizedBox(
                                         height: 30.0,
                                         width: 85.0,
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text('Filter'),
                                             SizedBox(width: 8.0),
-                                            Icon(Icons.filter_alt, color: Colors.black),
+                                            Icon(Icons.filter_alt,
+                                                color: Colors.black),
                                           ],
                                         ),
                                       ),
@@ -263,22 +273,30 @@ class _GraphicsCardState extends State<GraphicsCard> {
                                     SizedBox(width: 15)
                                   ],
                                 ),
-                                ...featuredProducts.map((product) => Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: ResponsiveCardRow(
-                                    screenWidth: screenWidth,
-                                    screenHeight: screenHeight,
-                                    commonTextStyle: commonTextStyle,
-                                    imagePath1: product.imagePaths.isNotEmpty ? product.imagePaths[0] : '',
-                                    brand1: product.title,
-                                    description1: product.description,
-                                    price1: '\$${product.salePrice}',
-                                    imagePath2: product.imagePaths.length > 1 ? product.imagePaths[1] : '',
-                                    brand2: product.title,
-                                    description2: product.description,
-                                    price2: '\$${product.offerPrice}',
-                                  ),
-                                )).toList()
+                                ...featuredProducts
+                                    .map((product) => Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: ResponsiveCardRow(
+                                            screenWidth: screenWidth,
+                                            screenHeight: screenHeight,
+                                            commonTextStyle: commonTextStyle,
+                                            imagePath1:
+                                                product.imagePaths.isNotEmpty
+                                                    ? product.imagePaths[0]
+                                                    : '',
+                                            brand1: product.title,
+                                            description1: product.description,
+                                            price1: '\$${product.salePrice}',
+                                            imagePath2:
+                                                product.imagePaths.length > 1
+                                                    ? product.imagePaths[1]
+                                                    : '',
+                                            brand2: product.title,
+                                            description2: product.description,
+                                            price2: '\$${product.offerPrice}',
+                                          ),
+                                        ))
+                                    .toList()
                               ],
                             ),
                           ),
@@ -338,14 +356,15 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
               children: [
                 widget.imagePath1.isNotEmpty
                     ? Image.network(
-                  widget.imagePath1,
-                  height: widget.screenHeight * 0.25,
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Placeholder(fallbackHeight: widget.screenHeight * 0.25);
-                  },
-                )
+                        widget.imagePath1,
+                        height: widget.screenHeight * 0.25,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Placeholder(
+                              fallbackHeight: widget.screenHeight * 0.25);
+                        },
+                      )
                     : Placeholder(fallbackHeight: widget.screenHeight * 0.25),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -353,7 +372,8 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: _buildDescription(widget.description1, _isExpanded1, () {
+                  child:
+                      _buildDescription(widget.description1, _isExpanded1, () {
                     setState(() {
                       _isExpanded1 = !_isExpanded1;
                     });
@@ -361,10 +381,14 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(widget.price1, style: TextStyle(fontSize: widget.screenWidth * 0.035, fontWeight: FontWeight.bold)),
+                  child: Text(widget.price1,
+                      style: TextStyle(
+                          fontSize: widget.screenWidth * 0.035,
+                          fontWeight: FontWeight.bold)),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 4.0),
                   child: ElevatedButton(
                     onPressed: () {
                       // Handle the add to cart action here
@@ -376,7 +400,8 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -395,14 +420,15 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
               children: [
                 widget.imagePath2.isNotEmpty
                     ? Image.network(
-                  widget.imagePath2,
-                  height: widget.screenHeight * 0.25,
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Placeholder(fallbackHeight: widget.screenHeight * 0.25);
-                  },
-                )
+                        widget.imagePath2,
+                        height: widget.screenHeight * 0.25,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Placeholder(
+                              fallbackHeight: widget.screenHeight * 0.25);
+                        },
+                      )
                     : Placeholder(fallbackHeight: widget.screenHeight * 0.25),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -410,7 +436,8 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: _buildDescription(widget.description2, _isExpanded2, () {
+                  child:
+                      _buildDescription(widget.description2, _isExpanded2, () {
                     setState(() {
                       _isExpanded2 = !_isExpanded2;
                     });
@@ -418,10 +445,14 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(widget.price2, style: TextStyle(fontSize: widget.screenWidth * 0.035, fontWeight: FontWeight.bold)),
+                  child: Text(widget.price2,
+                      style: TextStyle(
+                          fontSize: widget.screenWidth * 0.035,
+                          fontWeight: FontWeight.bold)),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 4.0),
                   child: TextButton(
                     onPressed: () {
                       // Handle the add to cart action here
@@ -433,7 +464,8 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -448,7 +480,8 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
     );
   }
 
-  Widget _buildDescription(String description, bool isExpanded, VoidCallback onReadMore) {
+  Widget _buildDescription(
+      String description, bool isExpanded, VoidCallback onReadMore) {
     final maxLines = isExpanded ? null : 3;
     final overflow = isExpanded ? TextOverflow.visible : TextOverflow.ellipsis;
 
@@ -472,4 +505,3 @@ class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
     );
   }
 }
-

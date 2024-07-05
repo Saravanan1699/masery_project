@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'home.dart';
+import 'home.dart'; // Replace with your actual home page import
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -12,47 +12,124 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  List<dynamic> carts = []; // List to hold fetched cart data
-  bool isLoading = true; // Add a loading state
+  List<dynamic> carts = [];
+  bool isLoading = true;
 
-  // Function to fetch data from API
   Future<void> fetchData() async {
     try {
       final response = await http.get(Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/carts'));
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        print('Response Data: $responseData'); // Debugging print
         if (responseData['success'] == true) {
           final List<dynamic> data = responseData['data'];
           if (data.isNotEmpty) {
             setState(() {
               carts = data.map((cart) {
                 cart['inventories'] = cart['inventories'].map((inventory) {
-                  inventory['quantity'] = inventory['quantity'] ?? 1; // Initialize quantity to 1 if null
+                  inventory['quantity'] = inventory['quantity'] ?? 1;
                   return inventory;
                 }).toList();
                 return cart;
               }).toList();
             });
-            print('Carts: $carts'); // Debugging print
           }
         }
       } else {
         throw Exception('Failed to load data');
       }
     } catch (e) {
-      print('Error fetching data: $e'); // Debugging print
+      print('Error fetching data: $e');
     } finally {
       setState(() {
-        isLoading = false; // Set loading to false after fetching data
+        isLoading = false;
       });
     }
   }
 
-  @override
+  Future<void> updateCartItemQuantity(BuildContext context, int cartId, int itemId, int newQuantity) async {
+    final String url = 'https://sgitjobs.com/MaseryShoppingNew/public/api/cart/$cartId/update?item=$itemId&quantity=$newQuantity';
+
+    try {
+      final response = await http.put(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        // Update local state to reflect the new quantity
+        setState(() {
+          carts.forEach((cart) {
+            var inventory = cart['inventories'].firstWhere((inv) => inv['id'] == itemId, orElse: () => null);
+            if (inventory != null) {
+              inventory['quantity'] = newQuantity;
+            }
+          });
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Item quantity updated successfully'),
+          ),
+        );
+      } else {
+        print('Failed to update item quantity: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update item quantity: ${response.statusCode}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error occurred: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> removeItemFromCart(int cartId, int itemId) async {
+    final String url = 'https://sgitjobs.com/MaseryShoppingNew/public/api/cart/removeItem?cart=$cartId&item=$itemId';
+    try {
+      final response = await http.delete(Uri.parse(url)); // Use DELETE method instead of GET
+
+      if (response.statusCode == 200) {
+        print('Item removed successfully');
+        await fetchData();
+        setState(() {
+          carts.forEach((cart) {
+            cart['inventories'].removeWhere((inventory) => inventory['id'] == itemId);
+          });
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Item removed successfully'),
+          ),
+        );
+      } else {
+        print('Failed to remove item: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to remove item: ${response.statusCode}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error occurred: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+    @override
   void initState() {
     super.initState();
-    fetchData(); // Fetch data when widget initializes
+    fetchData();
   }
 
   @override
@@ -102,8 +179,11 @@ class _CartPageState extends State<CartPage> {
                       ? 'https://sgitjobs.com/MaseryShoppingNew/public/${inventory['product']['images'][0]['path']}'
                       : 'assets/products/images/default_image.png'; // Provide a default image URL
                   double minPrice = double.tryParse(inventory['product']['min_price']) ?? 0.0; // Parsing minimum price
-                  double maxPrice = double.tryParse(inventory['product']['max_price']) ?? 0.0; // Parsing maximum price
+                  double unitPrice = double.tryParse(inventory['pivot']['unit_price']) ?? 0.0;
                   int quantity = inventory['quantity'] ?? 1; // Get the quantity
+
+                  // Calculate total price based on initial quantity and unit price
+                  double totalPrice = unitPrice * quantity.toDouble();
 
                   return Center(
                     child: Card(
@@ -148,18 +228,7 @@ class _CartPageState extends State<CartPage> {
                                         Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                           child: Text(
-                                            '\$${maxPrice.toStringAsFixed(2)}', // Display maximum price
-                                            style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.bold,
-                                              decoration: TextDecoration.lineThrough, // Add strikethrough
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                          child: Text(
-                                            '\$${minPrice.toStringAsFixed(2)}', // Display minimum price
+                                            '\$${totalPrice.toStringAsFixed(2)}', // Display updated total price
                                             style: TextStyle(
                                               fontSize: 17,
                                               fontWeight: FontWeight.bold,
@@ -177,20 +246,32 @@ class _CartPageState extends State<CartPage> {
                                     Row(
                                       children: [
                                         IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              if (quantity > 1) {
-                                                inventory['quantity']--;
-                                              }
-                                            });
+                                          onPressed: () async {
+                                            if (quantity > 1) {
+                                              await updateCartItemQuantity(
+                                                context,
+                                                int.parse(inventory['pivot']['cart_id'].toString()),
+                                                inventory['id'],
+                                                quantity - 1,
+                                              );
+                                              setState(() {
+                                                inventory['quantity'] = quantity - 1; // Update local state with new quantity
+                                              });
+                                            }
                                           },
                                           icon: Icon(Icons.remove, color: Colors.orangeAccent),
                                         ),
-                                        Text(quantity.toString(), style: TextStyle(fontSize: 16)),
+                                        Text(quantity.toString(), style: TextStyle(fontSize: 16)), // Display updated quantity
                                         IconButton(
-                                          onPressed: () {
+                                          onPressed: () async {
+                                            await updateCartItemQuantity(
+                                              context,
+                                              int.parse(inventory['pivot']['cart_id'].toString()),
+                                              inventory['id'],
+                                              quantity + 1,
+                                            );
                                             setState(() {
-                                              inventory['quantity']++;
+                                              inventory['quantity'] = quantity + 1; // Update local state with new quantity
                                             });
                                           },
                                           icon: Icon(Icons.add, color: Colors.orangeAccent),
@@ -198,13 +279,31 @@ class _CartPageState extends State<CartPage> {
                                       ],
                                     ),
                                     IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        print('Cart ID: ${inventory['pivot']['cart_id']}'); // Print Cart ID
+                                        print('Inventory ID: ${inventory['pivot']['inventory_id']}'); // Print Inventory ID
+                                        int cartId = int.tryParse(inventory['pivot']['cart_id'].toString()) ?? 0;
+                                        int itemId = int.tryParse(inventory['pivot']['inventory_id'].toString()) ?? 0;
+                                        if (cartId > 0 && itemId > 0) {
+                                          removeItemFromCart(cartId, itemId);
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Invalid cart or item ID'),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                        }
+                                      },
                                       icon: Icon(Icons.delete, color: Colors.orangeAccent),
                                     ),
                                   ],
                                 ),
                               ],
                             ),
+                            SizedBox(
+                              height: 10,
+                            )
                           ],
                         ),
                       ),
@@ -232,7 +331,7 @@ class _CartPageState extends State<CartPage> {
                     ),
                   ),
                   Text(
-                    '\$${calculateGrandTotal().toStringAsFixed(2)}', // Replace with your grand total calculation
+                    '\$${calculateGrandTotal().toStringAsFixed(2)}', // Calculate and display grand total
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -243,7 +342,7 @@ class _CartPageState extends State<CartPage> {
                     onPressed: carts.isEmpty
                         ? null // Disable button if no carts
                         : () {
-                      // Implement action when button is pressed
+                      // Implement action when button is pressed (e.g., navigate to checkout page)
                     },
                     child: Text(
                       'Checkout',
@@ -270,9 +369,10 @@ class _CartPageState extends State<CartPage> {
     for (var cart in carts) {
       for (var inventory in cart['inventories']) {
         int quantity = inventory['quantity'] ?? 1; // Ensure quantity is not null
-        grandTotal += (double.tryParse(inventory['product']['min_price']) ?? 0.0) * quantity;
+        grandTotal += (double.tryParse(inventory['pivot']['unit_price']) ?? 0.0) * quantity;
       }
     }
     return grandTotal;
   }
 }
+

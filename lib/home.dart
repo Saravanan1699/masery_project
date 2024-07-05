@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -68,6 +70,7 @@ class _HomePageState extends State<HomePage> {
   List<dynamic> recentProducts = [];
   List<dynamic> allProducts = [];
   List<dynamic> categoryBasedProducts = [];
+  List<dynamic> about = [];
   late PageController _pageController;
   double _currentPage = 0.0;
   Timer? _timer;
@@ -105,6 +108,7 @@ class _HomePageState extends State<HomePage> {
         recentProducts = jsonResponse['data']['recent_products'];
         allProducts = jsonResponse['data']['allProducts'];
         categoryBasedProducts = jsonResponse['data']['categoryBasedProducts'];
+        about = jsonResponse['data']['about'];
       });
     } else {
       throw Exception('Failed to load data');
@@ -314,8 +318,9 @@ class _HomePageState extends State<HomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProductDetail(product: product),
+                                      builder: (context) => ProductDetail(
+                                        product: product,
+                                      ),
                                     ),
                                   );
                                 },
@@ -582,6 +587,69 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(height: 15),
                         // Featured Products Section
+                        // Container(
+                        //   height: 300,
+                        //   child: ListView.builder(
+                        //     scrollDirection: Axis.horizontal,
+                        //     itemCount: about.length,
+                        //     itemBuilder: (context, index) {
+                        //       final category = about[index];
+                        //
+                        //       // Constructing image URL
+                        //       final imageUrl =
+                        //           'https://sgitjobs.com/MaseryShoppingNew/public/${category['path']}';
+                        //
+                        //       return Padding(
+                        //         padding: const EdgeInsets.all(8.0),
+                        //         child: Container(
+                        //           width: 200,
+                        //           child: Column(
+                        //             crossAxisAlignment:
+                        //                 CrossAxisAlignment.start,
+                        //             children: [
+                        //               Container(
+                        //                 height: 150,
+                        //                 decoration: BoxDecoration(
+                        //                   borderRadius: BorderRadius.vertical(
+                        //                     top: Radius.circular(15.0),
+                        //                   ),
+                        //                   image: DecorationImage(
+                        //                     image: NetworkImage(imageUrl),
+                        //                     fit: BoxFit.cover,
+                        //                   ),
+                        //                 ),
+                        //               ),
+                        //               Padding(
+                        //                 padding: const EdgeInsets.all(8.0),
+                        //                 child: Text(
+                        //                   category['title'] ??
+                        //                       '', // Display category title
+                        //                   style: const TextStyle(
+                        //                     fontSize: 14,
+                        //                     fontWeight: FontWeight.bold,
+                        //                   ),
+                        //                 ),
+                        //               ),
+                        //               Padding(
+                        //                 padding: const EdgeInsets.symmetric(
+                        //                     horizontal: 8.0),
+                        //                 child: Text(
+                        //                   category['description'] ??
+                        //                       '', // Display category description
+                        //                   style: const TextStyle(
+                        //                     fontSize: 12,
+                        //                     fontWeight: FontWeight.normal,
+                        //                   ),
+                        //                 ),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
+
                         Row(
                           children: [
                             const Text(

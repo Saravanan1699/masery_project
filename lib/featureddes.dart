@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 class ProductDetail extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -16,11 +19,12 @@ class _ProductDetailState extends State<ProductDetail> {
   double _currentPage = 0;
   bool isFavorite = false;
   bool _isExpanded = false;
-
+  List<dynamic> about = [];
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    fetchData();
   }
 
   void toggleFavorite() {
@@ -31,6 +35,19 @@ class _ProductDetailState extends State<ProductDetail> {
 
   void addToCart(Map<String, String> productMap) {
     // Implement your add to cart functionality here
+  }
+  Future<void> fetchData() async {
+    final response = await http.get(Uri.parse(
+        'https://sgitjobs.com/MaseryShoppingNew/public/api/homescreen'));
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      setState(() {
+        about = jsonResponse['data']['about'];
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
   }
 
   @override
@@ -202,17 +219,50 @@ class _ProductDetailState extends State<ProductDetail> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            // Replace with actual product data
+                          onPressed: () async {
                             Map<String, String> productMap = {
-                              'image': product['product']['image'].isNotEmpty
-                                  ? product['product']['image'][0]['path']
-                                  : 'assets/placeholder.png',
-                              'name': product['title'],
-                              'price':
-                                  '\$${product['offer_price'].toStringAsFixed(2)}',
+                              'image': 'https://example.com/image.png',
+                              'name': 'Example Product',
+                              'price': '\$29.99',
                             };
-                            addToCart(productMap);
+
+                            Future<void> addToCart(Map<String, String> product) async {
+                              final product = widget.product;
+                              final url = Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/addToCart/${product['slug']}');
+
+                              final response = await http.post(
+                                url,
+                                headers: {'Content-Type': 'application/json'},
+                                body: jsonEncode(product),
+                              );
+                              print('Slug: ${product['slug']}');
+
+                              // Log the status code and response body for debugging
+                              print('Status Code: ${response.statusCode}');
+                              print('Response Body: ${response.body}');
+
+                              if (response.statusCode == 200) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Added ${product['slug']} in cart')),
+                                );
+                              } else if (response.statusCode == 402) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('This item is already in the cart')),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Failed to add product to cart')),
+                                );
+                              }
+                            }
+
+                            try {
+                              await addToCart(productMap);
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('An error occurred: $e')),
+                              );
+                            }
                           },
                           child: Text(
                             'Add to Cart',
@@ -254,6 +304,80 @@ class _ProductDetailState extends State<ProductDetail> {
                         ),
                       ],
                     ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  Divider(
+                    height: 2.0,
+                    thickness: 1.0,
+                  ),
+                  Container(
+                    height: 250,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: about.length,
+                      itemBuilder: (context, index) {
+                        final category = about[index];
+
+                        // Constructing image URL
+                        final imageUrl =
+                            'https://sgitjobs.com/MaseryShoppingNew/public/${category['path']}';
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 200,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(15.0),
+                                    ),
+                                    image: DecorationImage(
+                                      image: NetworkImage(imageUrl),
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Text(
+                                      category['title'] ??
+                                          '', // Display category title
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Center(
+                                    child: Text(
+                                      category['description'] ??
+                                          '', // Display category description
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Divider(
+                    height: 2.0,
+                    thickness: 1.0,
                   ),
                 ],
               ),

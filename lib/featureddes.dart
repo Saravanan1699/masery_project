@@ -5,6 +5,8 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
+import 'home.dart';
+
 class ProductDetail extends StatefulWidget {
   final Map<String, dynamic> product;
 
@@ -59,6 +61,26 @@ class _ProductDetailState extends State<ProductDetail> {
     return Scaffold(
       appBar: AppBar(
         title: Text(product['title']),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return Container(
+              margin: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Color(0xffF2F2F2),
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new_outlined,
+                  size: 15,
+                ),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                },
+              ),
+            );
+          },
+        ),
       ),
       body: product == null
           ? Center(child: CircularProgressIndicator())
@@ -79,7 +101,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   Padding(
                     padding: const EdgeInsets.only(left: 15.0),
                     child: Text(
-                      '\$${(product['sku'])}  In Stock',
+                      '${(product['sku'])}  In Stock',
                       style: GoogleFonts.inter(
                         fontSize: screenWidth * 0.05,
                         fontWeight: FontWeight.w700,
@@ -221,48 +243,49 @@ class _ProductDetailState extends State<ProductDetail> {
                         ElevatedButton(
                           onPressed: () async {
                             Map<String, String> productMap = {
-                              'image': 'https://example.com/image.png',
-                              'name': 'Example Product',
-                              'price': '\$29.99',
+                              'quantity': '1',
+                              'shipTo': '1',
+                              'shippingZoneId': '1',
+                              'handling': '1'
                             };
 
                             Future<void> addToCart(Map<String, String> product) async {
-                              final product = widget.product;
-                              final url = Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/addToCart/${product['slug']}');
+                              try {
+                                final productSlug = widget.product['slug'];
+                                final url = Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/addToCart/$productSlug');
 
-                              final response = await http.post(
-                                url,
-                                headers: {'Content-Type': 'application/json'},
-                                body: jsonEncode(product),
-                              );
-                              print('Slug: ${product['slug']}');
-
-                              // Log the status code and response body for debugging
-                              print('Status Code: ${response.statusCode}');
-                              print('Response Body: ${response.body}');
-
-                              if (response.statusCode == 200) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Added ${product['slug']} in cart')),
+                                final response = await http.post(
+                                  url,
+                                  headers: {'Content-Type': 'application/json'},
+                                  body: jsonEncode(product),
                                 );
-                              } else if (response.statusCode == 402) {
+
+                                // Log the status code and response body for debugging
+                                print('Status Code: ${response.statusCode}');
+                                print('Response Body: ${response.body}');
+
+                                if (response.statusCode == 200) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Added $productSlug to cart')),
+                                  );
+                                } else if (response.statusCode == 402) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('This item is already in the cart')),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Failed to add product to cart')),
+                                  );
+                                }
+                              } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('This item is already in the cart')),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Failed to add product to cart')),
+                                  SnackBar(content: Text('An error occurred: $e')),
                                 );
                               }
                             }
 
-                            try {
-                              await addToCart(productMap);
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('An error occurred: $e')),
-                              );
-                            }
+                            // Call the addToCart function once
+                            await addToCart(productMap);
                           },
                           child: Text(
                             'Add to Cart',
@@ -311,26 +334,23 @@ class _ProductDetailState extends State<ProductDetail> {
                     thickness: 1.0,
                   ),
                   Container(
-                    height: 250,
+                    height: 140,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: about.length,
                       itemBuilder: (context, index) {
                         final category = about[index];
-
-                        // Constructing image URL
                         final imageUrl =
                             'https://sgitjobs.com/MaseryShoppingNew/public/${category['path']}';
-
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
-                            width: 200,
+                            width: 150,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  height: 100,
+                                  height: 50,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.vertical(
                                       top: Radius.circular(15.0),
@@ -341,16 +361,13 @@ class _ProductDetailState extends State<ProductDetail> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center(
-                                    child: Text(
-                                      category['title'] ??
-                                          '', // Display category title
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                Center(
+                                  child: Text(
+                                    category['title'] ??
+                                        '', // Display category title
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -362,7 +379,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                       category['description'] ??
                                           '', // Display category description
                                       style: const TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 10,
                                         fontWeight: FontWeight.normal,
                                       ),
                                     ),

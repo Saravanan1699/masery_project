@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:masery_project/cartpage.dart';
 import 'dart:convert';
 import 'Cart.dart';
+import 'Categorys_pages/categories_homepage.dart';
 import 'home.dart';
 import 'Categorys_pages/Categories.dart';
 import 'wishlist.dart';
@@ -51,7 +53,7 @@ class _BottomBarState extends State<BottomBar> {
       backgroundColor: Colors.white,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Wishlist'),
+        // BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Wishlist'),
         BottomNavigationBarItem(
           icon: Stack(
             children: [
@@ -84,7 +86,7 @@ class _BottomBarState extends State<BottomBar> {
           ),
           label: 'Cart',
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+        BottomNavigationBarItem(icon: Icon(Icons.category_outlined), label: 'Categories'),
         BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
       ],
       selectedItemColor: Colors.black,
@@ -96,17 +98,21 @@ class _BottomBarState extends State<BottomBar> {
             Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
             break;
           case 1:
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Wishlist(favoriteProducts: widget.favoriteProducts),
-              ),
-            );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
+
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => Wishlist(favoriteProducts: widget.favoriteProducts),
+            //   ),
+            // );
             break;
           case 2:
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Cart(favoriteProducts: widget.favoriteProducts,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CategoriesHomepage()));
+
             break;
           case 3:
+
             Navigator.push(context, MaterialPageRoute(builder: (context) => Categories()));
             break;
           case 4:

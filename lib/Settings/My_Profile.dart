@@ -19,6 +19,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   late SharedPreferences _prefs;
   String? authToken;
+  bool isSignedIn = false;
 
   @override
   void initState() {
@@ -29,6 +30,9 @@ class _ProfileState extends State<Profile> {
   Future<void> initSharedPreferences() async {
     _prefs = await SharedPreferences.getInstance();
     authToken = _prefs.getString('authToken');
+    setState(() {
+      isSignedIn = _prefs.getBool('isSignedIn') ?? false;
+    });
   }
 
   Future<void> logoutUser() async {
@@ -36,7 +40,7 @@ class _ProfileState extends State<Profile> {
       // Token is empty or null, navigate to login screen directly
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Signin()),
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
       return;
     }
@@ -59,7 +63,7 @@ class _ProfileState extends State<Profile> {
         if (responseData['success']) {
           // Clear stored token on successful logout
           await _prefs.remove('authToken');
-
+          await _prefs.setBool('isSignedIn', false);
           // Show success message using Snackbar
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -77,7 +81,8 @@ class _ProfileState extends State<Profile> {
           // Handle unsuccessful logout
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(responseData['message'] ?? 'Logout failed. Please try again.'),
+              content: Text(responseData['message'] ??
+                  'Logout failed. Please try again.'),
               duration: Duration(seconds: 2),
             ),
           );
@@ -85,6 +90,7 @@ class _ProfileState extends State<Profile> {
       } else if (response.statusCode == 401) {
         // Handle token expired or unauthorized
         await _prefs.remove('authToken');
+        await _prefs.setBool('isSignedIn', false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Token expired or unauthorized. Please login again.'),
@@ -95,7 +101,8 @@ class _ProfileState extends State<Profile> {
         // Handle API call failure
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Logout failed with status code ${response.statusCode}'),
+            content:
+                Text('Logout failed with status code ${response.statusCode}'),
             duration: Duration(seconds: 2),
           ),
         );

@@ -4,6 +4,7 @@ import 'package:masery_project/cartpage.dart';
 import 'dart:convert';
 import 'Cart.dart';
 import 'Categorys_pages/categories_homepage.dart';
+import 'Categorys_pages/categorylistview.dart';
 import 'home.dart';
 import 'Categorys_pages/Categories.dart';
 import 'wishlist.dart';
@@ -108,7 +109,7 @@ class _BottomBarState extends State<BottomBar> {
             // );
             break;
           case 2:
-            Navigator.push(context, MaterialPageRoute(builder: (context) => CategoriesHomepage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryDescription()));
 
             break;
           case 3:

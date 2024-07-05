@@ -9,7 +9,7 @@ class Product {
   final String description;
   final double minPrice;
   final double maxPrice;
-  final List<String> imagePaths;
+  final List<String> imageList;
 
   Product({
     required this.id,
@@ -18,12 +18,15 @@ class Product {
     required this.description,
     required this.minPrice,
     required this.maxPrice,
-    required this.imagePaths,
+    required this.imageList,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     var images = json['image'] as List<dynamic>? ?? [];
-    List<String> imagePaths = images.map((i) => i['path'] as String? ?? '').toList();
+    List<String> imageList = images
+        .map(
+            (i) => 'https://sgitjobs.com/MaseryShoppingNew/public/${i['path']}')
+        .toList();
 
     return Product(
       id: json['id'] ?? 0,
@@ -32,7 +35,7 @@ class Product {
       description: json['description'] ?? 'No description',
       minPrice: double.tryParse(json['min_price']?.toString() ?? '0.0') ?? 0.0,
       maxPrice: double.tryParse(json['max_price']?.toString() ?? '0.0') ?? 0.0,
-      imagePaths: imagePaths,
+      imageList: imageList,
     );
   }
 }
@@ -70,14 +73,43 @@ class CategoryDescription extends StatefulWidget {
 }
 
 class _CategoryDescriptionState extends State<CategoryDescription> {
-   TextEditingController _searchController = TextEditingController();
+  Map<String, bool> _filterOptions = {
+    'Asus': false,
+    'Acer': false,
+    'HP': false,
+    'Samsung': false,
+    'Lenovo': false,
+    'Apple': false,
+    'Android': false,
+    'Samsung Galaxy A11': false,
+    'Samsung Galaxy': false,
+    'IQOO 5G': false,
+    'Chandru': false,
+  };
+  Map<String, bool> _filtercategory = {
+    'Asus': false,
+    'Acer': false,
+    'HP': false,
+    'Samsung': false,
+    'Lenovo': false,
+    'Apple': false,
+    'Xiaomi': false,
+    'Dell': false,
+    'Samsung Galaxy A11': false,
+    'Samsung Galaxy': false,
+    'IQOO': false,
+    'Realme 12 Pro plus': false,
+  };
+
+  TextEditingController _searchController = TextEditingController();
   FocusNode _focusNode = FocusNode();
   List<Category> categories = [];
+
   bool isLoading = true;
   bool hasError = false;
   late PageController _pageController;
 
-@override
+  @override
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 0.8);
@@ -95,12 +127,16 @@ class _CategoryDescriptionState extends State<CategoryDescription> {
   Future<void> fetchFeaturedProducts() async {
     try {
       final response = await http.get(
-        Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/homescreen'),
+        Uri.parse(
+            'https://sgitjobs.com/MaseryShoppingNew/public/api/homescreen'),
       );
       if (response.statusCode == 200) {
-      final data = jsonDecode(response.body)['data']['categoryBasedProducts'] as List;
+        final data =
+            jsonDecode(response.body)['data']['categoryBasedProducts'] as List;
         setState(() {
-          categories = data.map((categoryJson) => Category.fromJson(categoryJson)).toList();
+          categories = data
+              .map((categoryJson) => Category.fromJson(categoryJson))
+              .toList();
           isLoading = false;
         });
       } else {
@@ -144,7 +180,8 @@ class _CategoryDescriptionState extends State<CategoryDescription> {
                             focusNode: _focusNode,
                             decoration: InputDecoration(
                               hintText: 'Search any Product...',
-                              prefixIcon: Icon(Icons.search, color: Color(0xffBBBBBB)),
+                              prefixIcon:
+                                  Icon(Icons.search, color: Color(0xffBBBBBB)),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15.0),
                                 borderSide: BorderSide.none,
@@ -155,38 +192,242 @@ class _CategoryDescriptionState extends State<CategoryDescription> {
                             ),
                           ),
                         ),
-                     Expanded(
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Text(
+                                '52,082+',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => _showFilterDialog(context),
+                              child: Card(
+                                color: Colors.white,
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: SizedBox(
+                                  height: 30.0,
+                                  width: 85.0,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(''),
+                                      SizedBox(width: 8.0),
+                                      Icon(Icons.filter_alt,
+                                          color: Colors.black),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Spacer(),
+                            Card(
+                              elevation: 4,
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: GestureDetector(
+                                onTap: () => _showBrandDialog(context),
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: SizedBox(
+                                    height: 30.0,
+                                    width: 85.0,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text('Brands'),
+                                        SizedBox(width: 8.0),
+                                        Icon(Icons.filter_list,
+                                            color: Colors.black),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Card(
+                            //   color: Colors.white,
+                            //   elevation: 4,
+                            //   shape: RoundedRectangleBorder(
+                            //     borderRadius: BorderRadius.circular(10.0),
+                            //   ),
+                            //   child: SizedBox(
+                            //     height: 30.0,
+                            //     width: 85.0,
+                            //     child: Row(
+                            //       mainAxisAlignment: MainAxisAlignment.center,
+                            //       children: [
+                            //         Text('Filter'),
+                            //         SizedBox(width: 8.0),
+                            //         Icon(Icons.filter_alt, color: Colors.black),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
+
+                            GestureDetector(
+                              onTap: () => _showFilterDialog(context),
+                              child: Card(
+                                color: Colors.white,
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: SizedBox(
+                                  height: 30.0,
+                                  width: 85.0,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('Filter'),
+                                      SizedBox(width: 8.0),
+                                      Icon(Icons.filter_alt,
+                                          color: Colors.black),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 15)
+                          ],
+                        ),
+                        Expanded(
                           child: SingleChildScrollView(
                             child: Column(
                               children: categories.expand((category) {
-                                return category.products.map((product) => Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: ResponsiveCardRow(
-                                    screenWidth: screenWidth,
-                                    screenHeight: screenHeight,
-                                    commonTextStyle: commonTextStyle,
-                                    imagePath1: product.imagePaths.isNotEmpty ? product.imagePaths[0] : '',
-                                    brand1: product.name,
-                                    description1: product.description,
-                                    price1: '\$${product.minPrice}',
-                                    imagePath2: product.imagePaths.length > 1 ? product.imagePaths[1] : '',
-                                    brand2: product.name,
-                                    description2: product.description,
-                                    price2: '\$${product.maxPrice}',
-                                  ),
-                                ));
+                                return category.products
+                                    .map((product) => Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: ResponsiveCardRow(
+                                            screenWidth: screenWidth,
+                                            screenHeight: screenHeight,
+                                            commonTextStyle: commonTextStyle,
+                                            imagePath1:
+                                                product.imageList.isNotEmpty
+                                                    ? product.imageList[0]
+                                                    : '',
+                                            brand1: product.name,
+                                            description1: product.description,
+                                            price1: '\$${product.minPrice}',
+                                            imagePath2:
+                                                product.imageList.length > 1
+                                                    ? product.imageList[1]
+                                                    : '',
+                                            brand2: product.name,
+                                            description2: product.description,
+                                            price2: '\$${product.maxPrice}',
+                                          ),
+                                        ))
+                                    .toList();
                               }).toList(),
                             ),
                           ),
-                        ),  ],
+                        ),
+                      ],
                     );
                   },
                 ),
     );
   }
+
+  void _showFilterDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Category Option'),
+          content: Container(
+            width: double.minPositive,
+            child: ListView(
+              shrinkWrap: true,
+              children: _filterOptions.keys.map((String key) {
+                return _buildCheckboxListTile(key);
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Handle filter logic
+                Navigator.of(context).pop();
+              },
+              child: Text('Apply'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showBrandDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Category Option'),
+          content: Container(
+            width: double.minPositive,
+            child: ListView(
+              shrinkWrap: true,
+              children: _filterOptions.keys.map((String key) {
+                return _buildCheckboxListTile(key);
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Handle filter logic
+                Navigator.of(context).pop();
+              },
+              child: Text('Apply'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildCheckboxListTile(String title) {
+    return CheckboxListTile(
+      value: _filterOptions[title], // Set initial value
+      onChanged: (bool? value) {
+        setState(() {
+          _filterOptions[title] = value!;
+        });
+      },
+      title: Text(title),
+    );
+  }
 }
 
-class ResponsiveCardRow extends StatelessWidget {
+class ResponsiveCardRow extends StatefulWidget {
   final double screenWidth;
   final double screenHeight;
   final TextStyle commonTextStyle;
@@ -214,42 +455,145 @@ class ResponsiveCardRow extends StatelessWidget {
   });
 
   @override
+  _ResponsiveCardRowState createState() => _ResponsiveCardRowState();
+}
+
+class _ResponsiveCardRowState extends State<ResponsiveCardRow> {
+  bool descriptionExpanded1 = false;
+  bool descriptionExpanded2 = false;
+
+  void _toggleDescription1() {
+    setState(() {
+      descriptionExpanded1 = !descriptionExpanded1;
+    });
+  }
+
+  void _toggleDescription2() {
+    setState(() {
+      descriptionExpanded2 = !descriptionExpanded2;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        buildProductCard(imagePath1, brand1, description1, price1),
-        buildProductCard(imagePath2, brand2, description2, price2),
+        buildProductCard(
+          widget.imagePath1,
+          widget.brand1,
+          widget.description1,
+          widget.price1,
+          descriptionExpanded1,
+          _toggleDescription1,
+        ),
+        buildProductCard(
+          widget.imagePath2,
+          widget.brand2,
+          widget.description2,
+          widget.price2,
+          descriptionExpanded2,
+          _toggleDescription2,
+        ),
       ],
     );
   }
 
-  Widget buildProductCard(String imagePath, String brand, String description, String price) {
+  Widget buildProductCard(
+    String imagePath,
+    String brand,
+    String description,
+    String price,
+    bool isExpanded,
+    VoidCallback onReadMore,
+  ) {
     return Card(
       elevation: 4,
       child: Container(
-        width: screenWidth * 0.45,
+        width: widget.screenWidth * 0.45,
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             imagePath.isNotEmpty
                 ? _buildImage(imagePath)
-                : Container(height: screenHeight * 0.2, width: screenWidth * 0.4, color: Colors.grey),
+                : Container(
+                    height: widget.screenHeight * 0.2,
+                    width: widget.screenWidth * 0.4,
+                    color: Colors.grey),
             SizedBox(height: 8.0),
-            Text(brand, style: commonTextStyle),
-            Text(description, style: TextStyle(fontSize: screenWidth * 0.035)),
-            Text(price, style: TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold)),
+            Text(brand, style: widget.commonTextStyle),
+            _buildDescription(description, isExpanded, onReadMore),
+            Text(price,
+                style: TextStyle(
+                    fontSize: widget.screenWidth * 0.04,
+                    fontWeight: FontWeight.bold)),
           ],
         ),
       ),
     );
   }
-   Widget _buildImage(String imagePath) {
+
+  Widget _buildImage(String imagePath) {
     if (imagePath.startsWith('http')) {
-      return Image.network(imagePath, fit: BoxFit.cover, height: screenHeight * 0.2, width: screenWidth * 0.4);
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        height: widget.screenHeight * 0.2,
+        width: widget.screenWidth * 0.4,
+        errorBuilder: (context, error, stackTrace) {
+          // Log the error or print it for debugging
+          print('Failed to load image: $error');
+          return Container(
+            height: widget.screenHeight * 0.2,
+            width: widget.screenWidth * 0.4,
+            color: Colors.grey,
+            child: Center(child: Icon(Icons.error, color: Colors.red)),
+          );
+        },
+      );
     } else {
-      return Image.asset(imagePath, fit: BoxFit.cover, height: screenHeight * 0.2, width: screenWidth * 0.4);
+      return Image.asset(
+        imagePath,
+        fit: BoxFit.cover,
+        height: widget.screenHeight * 0.2,
+        width: widget.screenWidth * 0.4,
+        errorBuilder: (context, error, stackTrace) {
+          // Log the error or print it for debugging
+          print('Failed to load image: $error');
+          return Container(
+            height: widget.screenHeight * 0.2,
+            width: widget.screenWidth * 0.4,
+            color: Colors.grey,
+            child: Center(child: Icon(Icons.error, color: Colors.red)),
+          );
+        },
+      );
     }
+  }
+
+  Widget _buildDescription(
+      String description, bool isExpanded, VoidCallback onReadMore) {
+    final maxLines = isExpanded ? null : 3;
+    final overflow = isExpanded ? TextOverflow.visible : TextOverflow.ellipsis;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          description,
+          maxLines: maxLines,
+          overflow: overflow,
+        ),
+        if (description.length > 100) // Adjust the length threshold as needed
+          InkWell(
+            onTap: onReadMore,
+            child: Text(
+              isExpanded ? 'Read Less' : 'Read More',
+              style: TextStyle(color: Colors.blue),
+            ),
+          ),
+      ],
+    );
   }
 }

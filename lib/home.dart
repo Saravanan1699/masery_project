@@ -10,6 +10,7 @@ import 'package:masery_project/Categorys_pages/ourbest_product.dart';
 import 'package:masery_project/Categorys_pages/recent_product.dart';
 import 'package:masery_project/featureddes.dart';
 import 'Categorys_pages/categories_homepage.dart';
+import 'Categorys_pages/categorylistview.dart';
 import 'Settings/My_Profile.dart';
 import 'bottombar.dart';
 
@@ -489,7 +490,7 @@ class _HomePageState extends State<HomePage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              CategoriesHomepage()),
+                                              CategoryDescription()),
                                     );
                                   },
                                   icon: Icon(

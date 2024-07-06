@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'Multiple_stepform/step_form.dart';
 import 'home.dart'; // Replace with your actual home page import
 
 class CartPage extends StatefulWidget {
@@ -261,7 +262,7 @@ class _CartPageState extends State<CartPage> {
                                           },
                                           icon: Icon(Icons.remove, color: Colors.orangeAccent),
                                         ),
-                                        Text(quantity.toString(), style: TextStyle(fontSize: 16)), // Display updated quantity
+                                        Text(inventory['quantity'].toString(), style: TextStyle(fontSize: 16)), // Display updated quantity
                                         IconButton(
                                           onPressed: () async {
                                             await updateCartItemQuantity(
@@ -342,7 +343,7 @@ class _CartPageState extends State<CartPage> {
                     onPressed: carts.isEmpty
                         ? null // Disable button if no carts
                         : () {
-                      // Implement action when button is pressed (e.g., navigate to checkout page)
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MultistepForm(product: {},)));
                     },
                     child: Text(
                       'Checkout',

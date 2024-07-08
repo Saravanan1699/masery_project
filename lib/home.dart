@@ -1,10 +1,12 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:masery_project/Categorys_pages/Graphics_card.dart';
 import 'package:masery_project/Categorys_pages/ourbest_product.dart';
 import 'package:masery_project/Categorys_pages/recent_product.dart';
@@ -130,7 +132,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         backgroundColor: Colors.white,
-        title: Center(child: Text('Masery Shop')),
+        title: Center(child: Text('Masery Shop',
+        style: GoogleFonts.montserrat(
+          fontSize: 20,
+          fontWeight: FontWeight.bold
+        ),)),
         leading: GestureDetector(
           onTap: () {
             Navigator.push(
@@ -168,6 +174,9 @@ class _HomePageState extends State<HomePage> {
               focusNode: _focusNode,
               decoration: InputDecoration(
                 hintText: 'Search any Product...',
+                hintStyle: GoogleFonts.montserrat(
+
+                ),
                 prefixIcon: Icon(Icons.search, color: Color(0xffBBBBBB)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15.0),
@@ -181,7 +190,14 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: banners.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+                ?  Center(
+              child: Container(
+                child: LoadingAnimationWidget.halfTriangleDot(
+                  size: 50.0, color: Colors.redAccent,
+                ),
+              ),
+            )
+
                 : SingleChildScrollView(
                     child: Column(
                       children: [
@@ -246,17 +262,17 @@ class _HomePageState extends State<HomePage> {
                         // Featured Products Section
                         Row(
                           children: [
-                            const Text(
+                             Text(
                               'Featured Products',
-                              style: TextStyle(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const Spacer(),
-                            const Text(
+                             Spacer(),
+                             Text(
                               'See All',
-                              style: TextStyle(
+                              style: GoogleFonts.montserrat(
                                   fontSize: 17, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
@@ -353,7 +369,7 @@ class _HomePageState extends State<HomePage> {
                                                   const EdgeInsets.all(8.0),
                                               child: Text(
                                                 product['title'],
-                                                style: const TextStyle(
+                                                style:  GoogleFonts.montserrat(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.normal,
                                                 ),
@@ -373,7 +389,7 @@ class _HomePageState extends State<HomePage> {
                                                         Text(
                                                           '\$$salePrice',
                                                           style:
-                                                              const TextStyle(
+                                                          GoogleFonts.montserrat(
                                                             fontSize: 15,
                                                             fontWeight:
                                                                 FontWeight
@@ -389,7 +405,7 @@ class _HomePageState extends State<HomePage> {
                                                         Text(
                                                           '\$$offerPrice',
                                                           style:
-                                                              const TextStyle(
+                                                          GoogleFonts.montserrat(
                                                             fontSize: 17,
                                                             fontWeight:
                                                                 FontWeight.bold,
@@ -400,7 +416,7 @@ class _HomePageState extends State<HomePage> {
                                                   ] else ...[
                                                     Text(
                                                       '\$$salePrice',
-                                                      style: const TextStyle(
+                                                      style:  GoogleFonts.montserrat(
                                                         fontSize: 17,
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -432,7 +448,7 @@ class _HomePageState extends State<HomePage> {
                                                 children: [
                                                   Text(
                                                     '$discountPercentageRounded%',
-                                                    style: const TextStyle(
+                                                    style:  GoogleFonts.montserrat(
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -441,7 +457,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                   Text(
                                                     'OFF',
-                                                    style: const TextStyle(
+                                                    style:  GoogleFonts.montserrat(
                                                       fontSize: 9,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -463,17 +479,17 @@ class _HomePageState extends State<HomePage> {
 
                         Row(
                           children: [
-                            const Text(
+                             Text(
                               'Categories',
-                              style: TextStyle(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const Spacer(),
-                            const Text(
+                             Spacer(),
+                             Text(
                               'See All',
-                              style: TextStyle(
+                              style: GoogleFonts.montserrat(
                                   fontSize: 17, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
@@ -562,7 +578,7 @@ class _HomePageState extends State<HomePage> {
                                         child: Text(
                                           category['name'] ??
                                               '', // Provide default value
-                                          style: const TextStyle(
+                                          style:  GoogleFonts.montserrat(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -573,7 +589,7 @@ class _HomePageState extends State<HomePage> {
                                             horizontal: 8.0),
                                         child: Text(
                                           '${category['products_count'] ?? ''} Products', // Provide default value
-                                          style: const TextStyle(
+                                          style:  GoogleFonts.montserrat(
                                             fontSize: 12,
                                             fontWeight: FontWeight.normal,
                                           ),
@@ -653,17 +669,17 @@ class _HomePageState extends State<HomePage> {
 
                         Row(
                           children: [
-                            const Text(
+                             Text(
                               'Our Best Collections',
-                              style: TextStyle(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const Spacer(),
-                            const Text(
+                             Spacer(),
+                             Text(
                               'See All',
-                              style: TextStyle(
+                              style: GoogleFonts.montserrat(
                                   fontSize: 17, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
@@ -768,10 +784,10 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.all(8.0),
+                                                   EdgeInsets.all(8.0),
                                               child: Text(
                                                 product['title'] ?? 'No title',
-                                                style: const TextStyle(
+                                                style:  GoogleFonts.montserrat(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.normal,
                                                 ),
@@ -791,7 +807,7 @@ class _HomePageState extends State<HomePage> {
                                                         Text(
                                                           '\$$salePrice',
                                                           style:
-                                                              const TextStyle(
+                                                          GoogleFonts.montserrat(
                                                             fontSize: 15,
                                                             fontWeight:
                                                                 FontWeight
@@ -807,7 +823,7 @@ class _HomePageState extends State<HomePage> {
                                                         Text(
                                                           '\$$offerPrice',
                                                           style:
-                                                              const TextStyle(
+                                                          GoogleFonts.montserrat(
                                                             fontSize: 17,
                                                             fontWeight:
                                                                 FontWeight.bold,
@@ -818,7 +834,7 @@ class _HomePageState extends State<HomePage> {
                                                   ] else ...[
                                                     Text(
                                                       '\$$salePrice',
-                                                      style: const TextStyle(
+                                                      style:  GoogleFonts.montserrat(
                                                         fontSize: 17,
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -850,7 +866,7 @@ class _HomePageState extends State<HomePage> {
                                                 children: [
                                                   Text(
                                                     '$discountPercentageRounded%',
-                                                    style: const TextStyle(
+                                                    style:  GoogleFonts.montserrat(
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -859,7 +875,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                   Text(
                                                     'OFF',
-                                                    style: const TextStyle(
+                                                    style:  GoogleFonts.montserrat(
                                                       fontSize: 9,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -881,20 +897,20 @@ class _HomePageState extends State<HomePage> {
 
                         Row(
                           children: [
-                            const Text(
+                             Text(
                               'Recent Products',
-                              style: TextStyle(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const Spacer(),
-                            const Text(
+                             Spacer(),
+                             Text(
                               'See All',
-                              style: TextStyle(
+                              style: GoogleFonts.montserrat(
                                   fontSize: 17, fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(
+                             SizedBox(
                               width: 10,
                             ),
                             Container(
@@ -999,7 +1015,7 @@ class _HomePageState extends State<HomePage> {
                                                   const EdgeInsets.all(8.0),
                                               child: Text(
                                                 product['title'] ?? 'No title',
-                                                style: const TextStyle(
+                                                style:  GoogleFonts.montserrat(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.normal,
                                                 ),
@@ -1019,7 +1035,7 @@ class _HomePageState extends State<HomePage> {
                                                         Text(
                                                           '\$$salePrice',
                                                           style:
-                                                              const TextStyle(
+                                                          GoogleFonts.montserrat(
                                                             fontSize: 15,
                                                             fontWeight:
                                                                 FontWeight
@@ -1035,7 +1051,7 @@ class _HomePageState extends State<HomePage> {
                                                         Text(
                                                           '\$$offerPrice',
                                                           style:
-                                                              const TextStyle(
+                                                          GoogleFonts.montserrat(
                                                             fontSize: 17,
                                                             fontWeight:
                                                                 FontWeight.bold,
@@ -1046,7 +1062,7 @@ class _HomePageState extends State<HomePage> {
                                                   ] else ...[
                                                     Text(
                                                       '\$$salePrice',
-                                                      style: const TextStyle(
+                                                      style:  GoogleFonts.montserrat(
                                                         fontSize: 17,
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -1078,7 +1094,7 @@ class _HomePageState extends State<HomePage> {
                                                 children: [
                                                   Text(
                                                     '$discountPercentageRounded%',
-                                                    style: const TextStyle(
+                                                    style:  GoogleFonts.montserrat(
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -1087,7 +1103,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                   Text(
                                                     'OFF',
-                                                    style: const TextStyle(
+                                                    style:  GoogleFonts.montserrat(
                                                       fontSize: 9,
                                                       fontWeight:
                                                           FontWeight.bold,

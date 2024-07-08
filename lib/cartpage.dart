@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'dart:convert';
 
 import 'Multiple_stepform/step_form.dart';
@@ -54,7 +55,6 @@ class _CartPageState extends State<CartPage> {
       final response = await http.put(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        // Update local state to reflect the new quantity
         setState(() {
           carts.forEach((cart) {
             var inventory = cart['inventories'].firstWhere((inv) => inv['id'] == itemId, orElse: () => null);
@@ -165,9 +165,15 @@ class _CartPageState extends State<CartPage> {
       body: Stack(
         children: [
           isLoading
-              ? Center(child: CircularProgressIndicator()) // Show loading indicator
+              ? Center(
+            child: Container(
+              child: LoadingAnimationWidget.halfTriangleDot(
+                size: 50.0, color: Colors.redAccent,
+              ),
+            ),
+          )
               : carts.isEmpty
-              ? Center(child: Text('No carts found')) // Show message when no carts found
+              ? Center(child: Text('No carts found'))
               : ListView.builder(
             itemCount: carts.length,
             itemBuilder: (BuildContext context, int index) {
@@ -209,97 +215,104 @@ class _CartPageState extends State<CartPage> {
                                 ),
                               ),
                             ),
+                            SizedBox(
+                              height: 20,
+                            ),
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        inventory['product']['name'] ?? '',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                          child: Text(
-                                            '\$${totalPrice.toStringAsFixed(2)}', // Display updated total price
-                                            style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                SizedBox(
+                                  width: 10,
                                 ),
-                                Spacer(),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          onPressed: () async {
-                                            if (quantity > 1) {
+                                Expanded(
+                                  child: Text(
+                                    inventory['product']['name'] ?? '',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 50,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () async {
+                                              if (quantity > 1) {
+                                                await updateCartItemQuantity(
+                                                  context,
+                                                  int.parse(inventory['pivot']['cart_id'].toString()),
+                                                  inventory['id'],
+                                                  quantity - 1,
+                                                );
+                                                setState(() {
+                                                  inventory['quantity'] = quantity - 1; // Update local state with new quantity
+                                                });
+                                              }
+                                            },
+                                            icon: Icon(Icons.remove, color: Colors.orangeAccent),
+                                          ),
+                                          Text(inventory['quantity'].toString(), style: TextStyle(fontSize: 16)), // Display updated quantity
+                                          IconButton(
+                                            onPressed: () async {
                                               await updateCartItemQuantity(
                                                 context,
                                                 int.parse(inventory['pivot']['cart_id'].toString()),
                                                 inventory['id'],
-                                                quantity - 1,
+                                                quantity + 1,
                                               );
                                               setState(() {
-                                                inventory['quantity'] = quantity - 1; // Update local state with new quantity
+                                                inventory['quantity'] = quantity + 1; // Update local state with new quantity
                                               });
-                                            }
-                                          },
-                                          icon: Icon(Icons.remove, color: Colors.orangeAccent),
-                                        ),
-                                        Text(inventory['quantity'].toString(), style: TextStyle(fontSize: 16)), // Display updated quantity
-                                        IconButton(
-                                          onPressed: () async {
-                                            await updateCartItemQuantity(
-                                              context,
-                                              int.parse(inventory['pivot']['cart_id'].toString()),
-                                              inventory['id'],
-                                              quantity + 1,
-                                            );
-                                            setState(() {
-                                              inventory['quantity'] = quantity + 1; // Update local state with new quantity
-                                            });
-                                          },
-                                          icon: Icon(Icons.add, color: Colors.orangeAccent),
-                                        ),
-                                      ],
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        print('Cart ID: ${inventory['pivot']['cart_id']}'); // Print Cart ID
-                                        print('Inventory ID: ${inventory['pivot']['inventory_id']}'); // Print Inventory ID
-                                        int cartId = int.tryParse(inventory['pivot']['cart_id'].toString()) ?? 0;
-                                        int itemId = int.tryParse(inventory['pivot']['inventory_id'].toString()) ?? 0;
-                                        if (cartId > 0 && itemId > 0) {
-                                          removeItemFromCart(cartId, itemId);
-                                        } else {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('Invalid cart or item ID'),
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      icon: Icon(Icons.delete, color: Colors.orangeAccent),
-                                    ),
-                                  ],
+                                            },
+                                            icon: Icon(Icons.add, color: Colors.orangeAccent),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  '\$${totalPrice.toStringAsFixed(2)}', // Display updated total price
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Spacer(),
+                                IconButton(
+                                  onPressed: () {
+                                    print('Cart ID: ${inventory['pivot']['cart_id']}'); // Print Cart ID
+                                    print('Inventory ID: ${inventory['pivot']['inventory_id']}'); // Print Inventory ID
+                                    int cartId = int.tryParse(inventory['pivot']['cart_id'].toString()) ?? 0;
+                                    int itemId = int.tryParse(inventory['pivot']['inventory_id'].toString()) ?? 0;
+                                    if (cartId > 0 && itemId > 0) {
+                                      removeItemFromCart(cartId, itemId);
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Invalid cart or item ID'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  icon: Icon(Icons.delete, color: Colors.orangeAccent),
+                                ),
+
                               ],
                             ),
                             SizedBox(

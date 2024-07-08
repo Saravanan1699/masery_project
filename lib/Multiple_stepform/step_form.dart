@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:masery_project/home.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,30 +24,26 @@ class _MultistepFormState extends State<MultistepForm> {
   late Map<String, dynamic> product;
   List<Map<String, dynamic>>? productData;
 
-  @override
-  void initState() {
-    super.initState();
-    product = widget.product;
-    fetchData();
-    _getToken;
-  }
-
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController pass = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController pincode = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    product = widget.product;
+    fetchData();
+    _getToken();
+  }
+
   Future<void> fetchData() async {
     try {
-      // Fetch cart_id
       String cartId = await fetchCartId();
-
-      // Construct URL with cart_id
       String url =
           'https://sgitjobs.com/MaseryShoppingNew/public/api/cart/$cartId/checkout';
 
-      // Fetch product data using the constructed URL
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -59,7 +56,6 @@ class _MultistepFormState extends State<MultistepForm> {
       }
     } catch (e) {
       print('Error: $e');
-      // Handle error accordingly, e.g., show error message to user
     }
   }
 
@@ -689,162 +685,146 @@ class _MultistepFormState extends State<MultistepForm> {
         Step(
           state: StepState.complete,
           isActive: _activeStepIndex >= 2,
-          title: const Text('Paymeny'),
-          content: productData == null
-              ? Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  child: Column(
-                    children: productData!.map((product) {
-                      return Column(
-                        children: [
-                          Divider(color: Colors.grey[300]),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              SizedBox(width: 20),
-                              Text(
-                                'Order',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0XFFA8A8A9),
-                                ),
-                              ),
-                              Spacer(),
-                              // Example text, replace with dynamic data
-                              Text(
-                                '\$${product['pivot']?['unit_price'] != null ? double.tryParse(product['pivot']?['unit_price'])?.toStringAsFixed(2) ?? 'N/A' : 'N/A'}',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0XFFA8A8A9),
-                                ),
-                              ),
-                              SizedBox(width: 20)
-                            ],
+          title: const Text('Payment'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: productData!.map((product) {
+                return Column(
+                  children: [
+                    Divider(color: Colors.grey[300]),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        SizedBox(width: 20),
+                        Text(
+                          'Order',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0XFFA8A8A9),
                           ),
-                          SizedBox(height: 15),
-                          // Repeat similar structures for Shipping, Total, Payment sections
-                          // Example:
-                          Row(
-                            children: [
-                              SizedBox(width: 20),
-                              Text(
-                                'Shipping',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0XFFA8A8A9),
-                                ),
-                              ),
-                              Spacer(),
-                              Text(
-                                '\$ 30',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0XFFA8A8A9),
-                                  decoration: TextDecoration.lineThrough,
-                                ),
-                              ),
-                              SizedBox(width: 20)
-                            ],
+                        ),
+                        Spacer(),
+                        Text(
+                          '\$${product['pivot']?['unit_price'] != null ? double.tryParse(product['pivot']?['unit_price'])?.toStringAsFixed(2) ?? 'N/A' : 'N/A'}',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0XFFA8A8A9),
                           ),
-                          SizedBox(height: 15),
-                          Row(
-                            children: [
-                              SizedBox(width: 20),
-                              Text(
-                                'Total',
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black),
-                              ),
-                              Spacer(),
-                              Text(
-                                '\$${product['pivot']?['unit_price'] != null ? double.tryParse(product['pivot']?['unit_price'])?.toStringAsFixed(2) ?? 'N/A' : 'N/A'}',
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black),
-                              ),
-                              SizedBox(width: 20)
-                            ],
+                        ),
+                        SizedBox(width: 20)
+                      ],
+                    ),
+                    SizedBox(height: 15),
+                    // Repeat similar structures for Shipping, Total, Payment sections
+                    // Example:
+                    Row(
+                      children: [
+                        SizedBox(width: 20),
+                        Text(
+                          'Shipping',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0XFFA8A8A9),
                           ),
-                          SizedBox(height: 15),
-                          Divider(
-                            color: Colors.grey[600],
-                            indent: 15,
-                            endIndent: 15,
+                        ),
+                        Spacer(),
+                        Text(
+                          '\$ 30',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0XFFA8A8A9),
+                            decoration: TextDecoration.lineThrough,
                           ),
-                          SizedBox(height: 15),
-                          Row(
-                            children: [
-                              SizedBox(width: 20),
-                              Text(
-                                'Payment',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isClicked = !_isClicked; // Toggle the state on each tap
-                                _isPaymentMethodSelected = true; // Mark payment method as selected
-                              });
-                            },
-                            child: Container(
-                              height: 60,
-                              width: 340,
-                              decoration: BoxDecoration(
-                                color: Color(0xFFF4F4F4),
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                  color: _isClicked ? Color(0xFFF83758) : Colors.transparent,
-                                ), // Apply border color only if clicked
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Text(
-                                    'Cash on delivery',
-                                    style: TextStyle(
-                                      color: Color(0XFF6E7179),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
+                        ),
+                        SizedBox(width: 20)
+                      ],
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      children: [
+                        SizedBox(width: 20),
+                        Text(
+                          'Total',
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black),
+                        ),
+                        Spacer(),
+                        Text(
+                          '\$${product['data']?['total'] != null ? double.tryParse(product['pivot']?['unit_price'])?.toStringAsFixed(2) ?? 'N/A' : 'N/A'}',
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black),
+                        ),
+                        SizedBox(width: 20)
+                      ],
+                    ),
+                    SizedBox(height: 15),
+                    Divider(
+                      color: Colors.grey[600],
+                      indent: 15,
+                      endIndent: 15,
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      children: [
+                        SizedBox(width: 20),
+                        Text(
+                          'Payment',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 15),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isClicked =
+                              !_isClicked; // Toggle the state on each tap
+                          _isPaymentMethodSelected =
+                              true; // Mark payment method as selected
+                        });
+                      },
+                      child: Container(
+                        height: 60,
+                        width: 340,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFF4F4F4),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: _isClicked
+                                ? Color(0xFFF83758)
+                                : Colors.transparent,
+                          ), // Apply border color only if clicked
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              'Cash on delivery',
+                              style: TextStyle(
+                                color: Color(0XFF6E7179),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                          ),
+                          ],
+                        ),
+                      ),
+                    ),
 
-                          SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: _handleCheckout,
-                            child: Text(
-                              'Buy Now',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 17),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xff0D6EFD),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              minimumSize: Size(150, 50),
-                            ),
-                          ),
-                          SizedBox(height: 15),
-
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),
+                    SizedBox(height: 20),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
         ),
       ];
 
@@ -855,237 +835,123 @@ class _MultistepFormState extends State<MultistepForm> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text('Checkout'),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return Container(
-              margin: EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                color: Color(0xffF7F7F9),
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_new_outlined,
-                  size: 15,
-                ),
-                onPressed: () {
-                  setState(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomePage()));
-                  });
-                },
-              ),
-            );
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_outlined,
+            size: 15,
+          ),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
           },
         ),
       ),
-      body: Stepper(
-        type: StepperType.horizontal,
-        currentStep: _activeStepIndex,
-        steps: stepList(),
-        connectorColor: MaterialStateProperty.all(Color(0xff0D6EFD)),
-        onStepContinue: () {
-          if (_activeStepIndex < (stepList().length - 1)) {
-            setState(() {
-              _activeStepIndex += 1;
-            });
-          } else {
-            print('Submitted');
-            // Perform final submission action
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Center(
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/tick.png',
-                          // Adjust image asset path as per your project structure
-                        ),
-                        SizedBox(width: 20),
-                      ],
-                    ),
-                  ),
-                  content: Text(
-                    'Payment done successfully.',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 17,
-                    ),
-                  ),
-                  actions: [
-                    Center(
+      body: productData == null
+          ? Center(
+              child: Container(
+                child: LoadingAnimationWidget.halfTriangleDot(
+                  size: 50.0, color: Colors.redAccent,
+                ),
+              ),
+            )
+          : Stepper(
+              type: StepperType.horizontal,
+              currentStep: _activeStepIndex,
+              steps: stepList(),
+              onStepContinue: () {
+                if (_activeStepIndex < (stepList().length - 1)) {
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      _activeStepIndex += 1;
+                    });
+                  }
+                } else {
+                  _handleCheckout();
+                }
+              },
+              onStepCancel: () {
+                if (_activeStepIndex > 0) {
+                  setState(() {
+                    _activeStepIndex -= 1;
+                  });
+                }
+              },
+              onStepTapped: (int index) {
+                setState(() {
+                  _activeStepIndex = index;
+                });
+              },
+              controlsBuilder: (BuildContext context, ControlsDetails details) {
+                final isLastStep = _activeStepIndex == stepList().length - 1;
+
+                return Row(
+                  children: [
+                    Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomePage(),
-                            ),
-                          );
+                          if (!isLastStep) {
+                            if (_formKey.currentState != null) {
+                              _formKey.currentState!.validate();
+                            }
+                          } else {
+                            setState(() {
+                              _activeStepIndex -= 1;
+                            });
+                          }
                         },
                         child: Text(
-                          'Pay Now', // Changed from 'Home' to 'Pay Now'
+                          isLastStep ? 'Back' : 'Save',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
+                            color: Color(0xff0D6EFD),
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xff0D6EFD),
+                          backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(color: Color(0xff0D6EFD)),
                           ),
+                          minimumSize: Size(150, 50),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (isLastStep) {
+                            _handleCheckout();
+                          } else if (_activeStepIndex > 0) {
+                            setState(() {
+                              _activeStepIndex -= 1;
+                            });
+                          }
+                        },
+                        child: Text(
+                          isLastStep ? 'Pay Now' : 'Back',
+                          style: TextStyle(
+                            color:
+                                isLastStep ? Colors.white : Color(0xff0D6EFD),
+                            fontSize: 17,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              isLastStep ? Color(0xff0D6EFD) : Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(color: Color(0xff0D6EFD)),
+                          ),
+                          minimumSize: Size(150, 50),
                         ),
                       ),
                     ),
                   ],
                 );
               },
-            );
-          }
-        },
-        onStepCancel: () {
-          if (_activeStepIndex > 0) {
-            setState(() {
-              _activeStepIndex -= 1;
-            });
-          }
-        },
-        onStepTapped: (int index) {
-          setState(() {
-            _activeStepIndex = index;
-          });
-        },
-        controlsBuilder: (BuildContext context, ControlsDetails details) {
-          final isLastStep = _activeStepIndex == stepList().length - 1;
-
-          return Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                    if (!isLastStep) {
-                      // Handle save action for each step
-                      details.onStepContinue!();
-                    }
-                    }
-                  },
-                  child: Text(
-                    isLastStep
-                        ? 'Back'
-                        : 'Save', // Changed from 'Submit' to 'Save'
-                    style: TextStyle(
-                      color: Color(0xff0D6EFD),
-                      fontSize: 17,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(color: Color(0xff0D6EFD)),
-                    ),
-                    minimumSize: Size(150, 50),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (isLastStep) {
-                      // Handle submit action here if needed
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Center(
-                              child: Column(
-                                children: [
-                                  Image.asset(
-                                    'assets/tick.png',
-                                    // Adjust image asset path as per your project structure
-                                  ),
-                                  SizedBox(width: 20),
-                                ],
-                              ),
-                            ),
-                            content: Text(
-                              'Payment done successfully.',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 17,
-                              ),
-                            ),
-                            actions: [
-                              Center(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => HomePage(),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    'Home',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xff0D6EFD),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      // Handle cancel/back action for each step
-                      if (_activeStepIndex > 0) {
-                        setState(() {
-                          _activeStepIndex -= 1;
-                        });
-                      }
-                    }
-                  },
-                  child: Text(
-                    isLastStep
-                        ? 'Paynow'
-                        : 'Back', // Changed from 'Home' to 'Pay Now' and 'Back'
-                    style: TextStyle(
-                      color: isLastStep ? Colors.white : Color(0xff0D6EFD),
-                      fontSize: 17,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isLastStep ? Color(0xff0D6EFD) : Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(
-                        color: Color(0xff0D6EFD),
-                      ),
-                    ),
-                    minimumSize: Size(150, 50),
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
+            ),
     );
   }
 }

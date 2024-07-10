@@ -23,6 +23,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _notificationCount = 0;
+
+  void _incrementCount() {
+    setState(() {
+      _notificationCount++;
+    });
+  }
   List<Map<String, dynamic>> mostpopular = [
     {
       'image': 'assets/mp_1.png',
@@ -152,10 +159,39 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {
-            },
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: Icon(Icons.notifications),
+                onPressed: _incrementCount,
+              ),
+              Positioned(
+                right: 11,
+                top: 11,
+                child: _notificationCount > 0
+                    ? Container(
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  constraints: BoxConstraints(
+                    minWidth: 14,
+                    minHeight: 14,
+                  ),
+                  child: Text(
+                    '$_notificationCount',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+                    : Container(),
+              ),
+            ],
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),

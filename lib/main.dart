@@ -141,7 +141,7 @@ class NotificationController {
                   children: [
                     Expanded(
                       child: Image.asset(
-                        'assets/images/animated-bell.gif',
+                        'assets/animated-bell.png',
                         height: MediaQuery.of(context).size.height * 0.3,
                         fit: BoxFit.fitWidth,
                       ),
@@ -286,7 +286,9 @@ class _AppState extends State<MyApp> {
 
   Future<void> fetchAndNotify() async {
     final response = await http.get(Uri.parse('https://sgitjobs.com/MaseryShoppingNew/public/api/recentnotification'));
+    print(response.body);
     if (response.statusCode == 200) {
+
       final responseData = jsonDecode(response.body);
       final data = responseData['data'];
       final title = data['title'];

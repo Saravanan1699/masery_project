@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -13,7 +12,6 @@ import 'package:masery_project/Categorys_pages/recent_product.dart';
 import 'package:masery_project/featureddes.dart';
 import 'Categorys_pages/categories_homepage.dart';
 import 'Categorys_pages/categorylistview.dart';
-import 'Notification/Notification_page.dart';
 import 'Settings/My_Profile.dart';
 import 'bottombar.dart';
 
@@ -157,23 +155,6 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(Icons.notifications),
             onPressed: () {
-              // Check if NotificationController.initialAction is not null
-              if (NotificationController.initialAction != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NotificationPage(
-                        receivedAction: NotificationController.initialAction!),
-                  ),
-                );
-              } else {
-                // Handle the case where initialAction is null, e.g., show a message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('No new notifications'),
-                  ),
-                );
-              }
             },
           ),
           Padding(

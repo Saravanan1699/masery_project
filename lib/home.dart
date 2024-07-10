@@ -210,7 +210,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
 
-        body: Column(
+      body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -244,932 +244,932 @@ class _HomePageState extends State<HomePage> {
             )
 
                 : SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 250,
-                          child: PageView.builder(
-                            controller: _pageController,
-                            itemCount: banners.length,
-                            onPageChanged: (int page) {
-                              setState(() {
-                                _currentPage = page.toDouble();
-                              });
-                            },
-                            itemBuilder: (context, index) {
-                              final banner = banners[index];
-                              final imageUrl =
-                                  'https://sgitjobs.com/MaseryShoppingNew/public/${banner['path']}';
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Card(
-                                  color: Colors.white,
-                                  elevation: 4,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      image: DecorationImage(
-                                        image: NetworkImage(imageUrl),
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                  ),
+              child: Column(
+                children: [
+                  Container(
+                    height: 250,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: banners.length,
+                      onPageChanged: (int page) {
+                        setState(() {
+                          _currentPage = page.toDouble();
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        final banner = banners[index];
+                        final imageUrl =
+                            'https://sgitjobs.com/MaseryShoppingNew/public/${banner['path']}';
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            color: Colors.white,
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                image: DecorationImage(
+                                  image: NetworkImage(imageUrl),
+                                  fit: BoxFit.contain,
                                 ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  DotsIndicator(
+                    dotsCount: banners.length,
+                    position: _currentPage,
+                    decorator: DotsDecorator(
+                      color: Color(0xff0D6EFD),
+                      activeColor: Color(0xffF87265),
+                      size: Size.square(9.0),
+                      activeSize: Size(18.0, 9.0),
+                      spacing: EdgeInsets.symmetric(horizontal: 5.0),
+                      activeShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0)),
+                    ),
+                    onTap: (index) {
+                      _pageController.animateToPage(
+                        index.toInt(),
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                  // Featured Products Section
+                  Row(
+                    children: [
+                      Text(
+                        'Featured Products',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        'See All',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => GraphicsCard()),
                               );
                             },
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        DotsIndicator(
-                          dotsCount: banners.length,
-                          position: _currentPage,
-                          decorator: DotsDecorator(
-                            color: Color(0xff0D6EFD),
-                            activeColor: Color(0xffF87265),
-                            size: Size.square(9.0),
-                            activeSize: Size(18.0, 9.0),
-                            spacing: EdgeInsets.symmetric(horizontal: 5.0),
-                            activeShape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                          ),
-                          onTap: (index) {
-                            _pageController.animateToPage(
-                              index.toInt(),
-                              duration: const Duration(milliseconds: 400),
-                              curve: Curves.easeInOut,
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              size: 25,
+                              color: Colors.white,
+                            ),
+                          ))
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 300,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: featuredProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = featuredProducts[index];
+                        final imageUrl =
+                            'https://sgitjobs.com/MaseryShoppingNew/public/${product['product']['image'][0]['path']}';
+
+                        final offerStart =
+                        DateTime.parse(product['offer_start']);
+                        final offerEnd =
+                        DateTime.parse(product['offer_end']);
+                        final currentDate = DateTime.now();
+
+                        final bool isOfferPeriod =
+                            currentDate.isAfter(offerStart) &&
+                                currentDate.isBefore(offerEnd);
+                        final salePrice =
+                        double.parse(product['sale_price']);
+                        final offerPrice =
+                        double.parse(product['offer_price']);
+
+                        final double discountPercentage =
+                            ((salePrice - offerPrice) / salePrice) * 100;
+
+                        final int discountPercentageRounded =
+                        discountPercentage.ceil();
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetail(
+                                  product: product,
+                                ),
+                              ),
                             );
                           },
-                        ),
-                        const SizedBox(height: 32),
-                        // Featured Products Section
-                        Row(
-                          children: [
-                             Text(
-                              'Featured Products',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                             Spacer(),
-                             Text(
-                              'See All',
-                              style: GoogleFonts.montserrat(
-                                  fontSize: 17, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.blue,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => GraphicsCard()),
-                                    );
-                                  },
-                                  icon: Icon(
-                                    Icons.arrow_forward,
-                                    size: 25,
-                                    color: Colors.white,
-                                  ),
-                                ))
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          height: 300,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: featuredProducts.length,
-                            itemBuilder: (context, index) {
-                              final product = featuredProducts[index];
-                              final imageUrl =
-                                  'https://sgitjobs.com/MaseryShoppingNew/public/${product['product']['image'][0]['path']}';
-
-                              final offerStart =
-                                  DateTime.parse(product['offer_start']);
-                              final offerEnd =
-                                  DateTime.parse(product['offer_end']);
-                              final currentDate = DateTime.now();
-
-                              final bool isOfferPeriod =
-                                  currentDate.isAfter(offerStart) &&
-                                      currentDate.isBefore(offerEnd);
-                              final salePrice =
-                                  double.parse(product['sale_price']);
-                              final offerPrice =
-                                  double.parse(product['offer_price']);
-
-                              final double discountPercentage =
-                                  ((salePrice - offerPrice) / salePrice) * 100;
-
-                              final int discountPercentageRounded =
-                                  discountPercentage.ceil();
-
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProductDetail(
-                                        product: product,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 200,
-                                    child: Stack(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              height: 150,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.vertical(
-                                                  top: Radius.circular(15.0),
-                                                ),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(imageUrl),
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                product['title'],
-                                                style:  GoogleFonts.montserrat(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.normal,
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  if (isOfferPeriod) ...[
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          '\$$salePrice',
-                                                          style:
-                                                          GoogleFonts.montserrat(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .lineThrough,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        Text(
-                                                          '\$$offerPrice',
-                                                          style:
-                                                          GoogleFonts.montserrat(
-                                                            fontSize: 17,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ] else ...[
-                                                    Text(
-                                                      '\$$salePrice',
-                                                      style:  GoogleFonts.montserrat(
-                                                        fontSize: 17,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        if (isOfferPeriod)
-                                          Positioned(
-                                            top: 0,
-                                            left: 0,
-                                            child: Container(
-                                              height: 40,
-                                              width: 40,
-                                              decoration: BoxDecoration(
-                                                color: Colors.orangeAccent,
-                                                borderRadius:
-                                                    BorderRadius.circular(30.0),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.all(4.0),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    '$discountPercentageRounded%',
-                                                    style:  GoogleFonts.montserrat(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'OFF',
-                                                    style:  GoogleFonts.montserrat(
-                                                      fontSize: 9,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-
-                        Row(
-                          children: [
-                             Text(
-                              'Categories',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                             Spacer(),
-                             Text(
-                              'See All',
-                              style: GoogleFonts.montserrat(
-                                  fontSize: 17, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.blue,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              CategoryDescription()),
-                                    );
-                                  },
-                                  icon: Icon(
-                                    Icons.arrow_forward,
-                                    size: 25,
-                                    color: Colors.white,
-                                  ),
-                                ))
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          height: 300,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: categoryBasedProducts.length,
-                            itemBuilder: (context, index) {
-                              final category = categoryBasedProducts[index];
-                              final products = category['products'];
-
-                              if (products == null || products.isEmpty) {
-                                return SizedBox(); // Return an empty SizedBox if products are null or empty
-                              }
-
-                              final product = products[
-                                  0]; // Assuming you want to access the first product
-
-                              // Check if product and image path are not null before accessing
-                              final imagePath = product['image'] != null &&
-                                      product['image'].isNotEmpty &&
-                                      product['image'][0]['path'] != null
-                                  ? product['image'][0]['path']
-                                  : '';
-
-                              final imageUrl = imagePath.isNotEmpty
-                                  ? 'https://sgitjobs.com/MaseryShoppingNew/public/$imagePath'
-                                  : ''; // Provide a default empty URL if imagePath is empty
-
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  width: 200,
-                                  child: Column(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: 200,
+                              child: Stack(
+                                children: [
+                                  Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Container(
                                         height: 150,
-                                        decoration: imageUrl.isNotEmpty
-                                            ? BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.vertical(
-                                                  top: Radius.circular(15.0),
-                                                ),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(imageUrl),
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              )
-                                            : BoxDecoration(), // Handle empty image URL case
-                                      ),
-                                      Container(
-                                        child: Column(
-                                          children: [],
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          category['name'] ??
-                                              '', // Provide default value
-                                          style:  GoogleFonts.montserrat(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          const BorderRadius.vertical(
+                                            top: Radius.circular(15.0),
+                                          ),
+                                          image: DecorationImage(
+                                            image: NetworkImage(imageUrl),
+                                            fit: BoxFit.contain,
                                           ),
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0),
+                                        padding:
+                                        const EdgeInsets.all(8.0),
                                         child: Text(
-                                          '${category['products_count'] ?? ''} Products', // Provide default value
+                                          product['title'],
                                           style:  GoogleFonts.montserrat(
-                                            fontSize: 12,
+                                            fontSize: 11,
                                             fontWeight: FontWeight.normal,
                                           ),
                                         ),
                                       ),
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            if (isOfferPeriod) ...[
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    '\$$salePrice',
+                                                    style:
+                                                    GoogleFonts.montserrat(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .normal,
+                                                      decoration:
+                                                      TextDecoration
+                                                          .lineThrough,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(
+                                                    '\$$offerPrice',
+                                                    style:
+                                                    GoogleFonts.montserrat(
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ] else ...[
+                                              Text(
+                                                '\$$salePrice',
+                                                style:  GoogleFonts.montserrat(
+                                                  fontSize: 17,
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        // Featured Products Section
-                        // Container(
-                        //   height: 300,
-                        //   child: ListView.builder(
-                        //     scrollDirection: Axis.horizontal,
-                        //     itemCount: about.length,
-                        //     itemBuilder: (context, index) {
-                        //       final category = about[index];
-                        //
-                        //       // Constructing image URL
-                        //       final imageUrl =
-                        //           'https://sgitjobs.com/MaseryShoppingNew/public/${category['path']}';
-                        //
-                        //       return Padding(
-                        //         padding: const EdgeInsets.all(8.0),
-                        //         child: Container(
-                        //           width: 200,
-                        //           child: Column(
-                        //             crossAxisAlignment:
-                        //                 CrossAxisAlignment.start,
-                        //             children: [
-                        //               Container(
-                        //                 height: 150,
-                        //                 decoration: BoxDecoration(
-                        //                   borderRadius: BorderRadius.vertical(
-                        //                     top: Radius.circular(15.0),
-                        //                   ),
-                        //                   image: DecorationImage(
-                        //                     image: NetworkImage(imageUrl),
-                        //                     fit: BoxFit.cover,
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //               Padding(
-                        //                 padding: const EdgeInsets.all(8.0),
-                        //                 child: Text(
-                        //                   category['title'] ??
-                        //                       '', // Display category title
-                        //                   style: const TextStyle(
-                        //                     fontSize: 14,
-                        //                     fontWeight: FontWeight.bold,
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //               Padding(
-                        //                 padding: const EdgeInsets.symmetric(
-                        //                     horizontal: 8.0),
-                        //                 child: Text(
-                        //                   category['description'] ??
-                        //                       '', // Display category description
-                        //                   style: const TextStyle(
-                        //                     fontSize: 12,
-                        //                     fontWeight: FontWeight.normal,
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //             ],
-                        //           ),
-                        //         ),
-                        //       );
-                        //     },
-                        //   ),
-                        // ),
-
-                        Row(
-                          children: [
-                             Text(
-                              'Our Best Collections',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                             Spacer(),
-                             Text(
-                              'See All',
-                              style: GoogleFonts.montserrat(
-                                  fontSize: 17, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.blue,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              OurbestproductList()),
-                                    );
-                                  },
-                                  icon: Icon(
-                                    Icons.arrow_forward,
-                                    size: 25,
-                                    color: Colors.white,
-                                  ),
-                                ))
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          height: 300,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: allProducts.length,
-                            itemBuilder: (context, index) {
-                              final product = allProducts[index];
-                              final imagePath =
-                                  product['product']?['image']?[0]?['path'];
-                              final imageUrl = imagePath != null
-                                  ? 'https://sgitjobs.com/MaseryShoppingNew/public/$imagePath'
-                                  : 'https://example.com/placeholder.png'; // Placeholder image URL
-
-                              final offerStartStr = product['offer_start'];
-                              final offerEndStr = product['offer_end'];
-                              final salePriceStr = product['sale_price'];
-                              final offerPriceStr = product['offer_price'];
-
-                              if (offerStartStr == null ||
-                                  offerEndStr == null ||
-                                  salePriceStr == null ||
-                                  offerPriceStr == null) {
-                                // Skip this item if critical data is missing
-                                return SizedBox.shrink();
-                              }
-
-                              final offerStart = DateTime.parse(offerStartStr);
-                              final offerEnd = DateTime.parse(offerEndStr);
-                              final currentDate = DateTime.now();
-
-                              final bool isOfferPeriod =
-                                  currentDate.isAfter(offerStart) &&
-                                      currentDate.isBefore(offerEnd);
-                              final salePrice = double.parse(salePriceStr);
-                              final offerPrice = double.parse(offerPriceStr);
-
-                              final double discountPercentage =
-                                  ((salePrice - offerPrice) / salePrice) * 100;
-                              final int discountPercentageRounded =
-                                  discountPercentage.ceil();
-
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProductDetail(product: product),
-                                    ),
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 200,
-                                    child: Stack(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                  if (isOfferPeriod)
+                                    Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.orangeAccent,
+                                          borderRadius:
+                                          BorderRadius.circular(30.0),
+                                        ),
+                                        padding:
+                                        const EdgeInsets.all(4.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                           children: [
-                                            Container(
-                                              height: 150,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.vertical(
-                                                  top: Radius.circular(15.0),
-                                                ),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(imageUrl),
-                                                  fit: BoxFit.contain,
-                                                ),
+                                            Text(
+                                              '$discountPercentageRounded%',
+                                              style:  GoogleFonts.montserrat(
+                                                fontSize: 12,
+                                                fontWeight:
+                                                FontWeight.bold,
+                                                color: Colors.white,
                                               ),
                                             ),
-                                            Padding(
-                                              padding:
-                                                   EdgeInsets.all(8.0),
-                                              child: Text(
-                                                product['title'] ?? 'No title',
-                                                style:  GoogleFonts.montserrat(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.normal,
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  if (isOfferPeriod) ...[
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          '\$$salePrice',
-                                                          style:
-                                                          GoogleFonts.montserrat(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .lineThrough,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        Text(
-                                                          '\$$offerPrice',
-                                                          style:
-                                                          GoogleFonts.montserrat(
-                                                            fontSize: 17,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ] else ...[
-                                                    Text(
-                                                      '\$$salePrice',
-                                                      style:  GoogleFonts.montserrat(
-                                                        fontSize: 17,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ],
+                                            Text(
+                                              'OFF',
+                                              style:  GoogleFonts.montserrat(
+                                                fontSize: 9,
+                                                fontWeight:
+                                                FontWeight.bold,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ],
                                         ),
-                                        if (isOfferPeriod)
-                                          Positioned(
-                                            top: 0,
-                                            left: 0,
-                                            child: Container(
-                                              height: 40,
-                                              width: 40,
-                                              decoration: BoxDecoration(
-                                                color: Colors.orangeAccent,
-                                                borderRadius:
-                                                    BorderRadius.circular(30.0),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.all(4.0),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    '$discountPercentageRounded%',
-                                                    style:  GoogleFonts.montserrat(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'OFF',
-                                                    style:  GoogleFonts.montserrat(
-                                                      fontSize: 9,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-
-                        Row(
-                          children: [
-                             Text(
-                              'Recent Products',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                                ],
                               ),
                             ),
-                             Spacer(),
-                             Text(
-                              'See All',
-                              style: GoogleFonts.montserrat(
-                                  fontSize: 17, fontWeight: FontWeight.bold),
-                            ),
-                             SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.blue,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              GraphicsCard1()),
-                                    );
-                                  },
-                                  icon: Icon(
-                                    Icons.arrow_forward,
-                                    size: 25,
-                                    color: Colors.white,
-                                  ),
-                                ))
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          height: 300,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: recentProducts.length,
-                            itemBuilder: (context, index) {
-                              final product = recentProducts[index];
-                              final imagePath =
-                                  product['product']?['image']?[0]?['path'];
-                              final imageUrl = imagePath != null
-                                  ? 'https://sgitjobs.com/MaseryShoppingNew/public/$imagePath'
-                                  : 'https://example.com/placeholder.png'; // Placeholder image URL
-
-                              final offerStartStr = product['offer_start'];
-                              final offerEndStr = product['offer_end'];
-                              final salePriceStr = product['sale_price'];
-                              final offerPriceStr = product['offer_price'];
-
-                              if (offerStartStr == null ||
-                                  offerEndStr == null ||
-                                  salePriceStr == null ||
-                                  offerPriceStr == null) {
-                                // Skip this item if critical data is missing
-                                return SizedBox.shrink();
-                              }
-
-                              final offerStart = DateTime.parse(offerStartStr);
-                              final offerEnd = DateTime.parse(offerEndStr);
-                              final currentDate = DateTime.now();
-
-                              final bool isOfferPeriod =
-                                  currentDate.isAfter(offerStart) &&
-                                      currentDate.isBefore(offerEnd);
-                              final salePrice = double.parse(salePriceStr);
-                              final offerPrice = double.parse(offerPriceStr);
-
-                              final double discountPercentage =
-                                  ((salePrice - offerPrice) / salePrice) * 100;
-                              final int discountPercentageRounded =
-                                  discountPercentage.ceil();
-
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProductDetail(product: product),
-                                    ),
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 200,
-                                    child: Stack(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              height: 150,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.vertical(
-                                                  top: Radius.circular(15.0),
-                                                ),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(imageUrl),
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                product['title'] ?? 'No title',
-                                                style:  GoogleFonts.montserrat(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.normal,
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  if (isOfferPeriod) ...[
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          '\$$salePrice',
-                                                          style:
-                                                          GoogleFonts.montserrat(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .lineThrough,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        Text(
-                                                          '\$$offerPrice',
-                                                          style:
-                                                          GoogleFonts.montserrat(
-                                                            fontSize: 17,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ] else ...[
-                                                    Text(
-                                                      '\$$salePrice',
-                                                      style:  GoogleFonts.montserrat(
-                                                        fontSize: 17,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        if (isOfferPeriod)
-                                          Positioned(
-                                            top: 0,
-                                            left: 0,
-                                            child: Container(
-                                              height: 40,
-                                              width: 40,
-                                              decoration: BoxDecoration(
-                                                color: Colors.orangeAccent,
-                                                borderRadius:
-                                                    BorderRadius.circular(30.0),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.all(4.0),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    '$discountPercentageRounded%',
-                                                    style:  GoogleFonts.montserrat(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'OFF',
-                                                    style:  GoogleFonts.montserrat(
-                                                      fontSize: 9,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
                           ),
-                        )
-                      ],
+                        );
+                      },
                     ),
                   ),
+
+                  Row(
+                    children: [
+                      Text(
+                        'Categories',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        'See All',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CategoryDescription()),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              size: 25,
+                              color: Colors.white,
+                            ),
+                          ))
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 300,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: categoryBasedProducts.length,
+                      itemBuilder: (context, index) {
+                        final category = categoryBasedProducts[index];
+                        final products = category['products'];
+
+                        if (products == null || products.isEmpty) {
+                          return SizedBox(); // Return an empty SizedBox if products are null or empty
+                        }
+
+                        final product = products[
+                        0]; // Assuming you want to access the first product
+
+                        // Check if product and image path are not null before accessing
+                        final imagePath = product['image'] != null &&
+                            product['image'].isNotEmpty &&
+                            product['image'][0]['path'] != null
+                            ? product['image'][0]['path']
+                            : '';
+
+                        final imageUrl = imagePath.isNotEmpty
+                            ? 'https://sgitjobs.com/MaseryShoppingNew/public/$imagePath'
+                            : ''; // Provide a default empty URL if imagePath is empty
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 200,
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 150,
+                                  decoration: imageUrl.isNotEmpty
+                                      ? BoxDecoration(
+                                    borderRadius:
+                                    const BorderRadius.vertical(
+                                      top: Radius.circular(15.0),
+                                    ),
+                                    image: DecorationImage(
+                                      image: NetworkImage(imageUrl),
+                                      fit: BoxFit.contain,
+                                    ),
+                                  )
+                                      : BoxDecoration(), // Handle empty image URL case
+                                ),
+                                Container(
+                                  child: Column(
+                                    children: [],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    category['name'] ??
+                                        '', // Provide default value
+                                    style:  GoogleFonts.montserrat(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Text(
+                                    '${category['products_count'] ?? ''} Products', // Provide default value
+                                    style:  GoogleFonts.montserrat(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  // Featured Products Section
+                  // Container(
+                  //   height: 300,
+                  //   child: ListView.builder(
+                  //     scrollDirection: Axis.horizontal,
+                  //     itemCount: about.length,
+                  //     itemBuilder: (context, index) {
+                  //       final category = about[index];
+                  //
+                  //       // Constructing image URL
+                  //       final imageUrl =
+                  //           'https://sgitjobs.com/MaseryShoppingNew/public/${category['path']}';
+                  //
+                  //       return Padding(
+                  //         padding: const EdgeInsets.all(8.0),
+                  //         child: Container(
+                  //           width: 200,
+                  //           child: Column(
+                  //             crossAxisAlignment:
+                  //                 CrossAxisAlignment.start,
+                  //             children: [
+                  //               Container(
+                  //                 height: 150,
+                  //                 decoration: BoxDecoration(
+                  //                   borderRadius: BorderRadius.vertical(
+                  //                     top: Radius.circular(15.0),
+                  //                   ),
+                  //                   image: DecorationImage(
+                  //                     image: NetworkImage(imageUrl),
+                  //                     fit: BoxFit.cover,
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               Padding(
+                  //                 padding: const EdgeInsets.all(8.0),
+                  //                 child: Text(
+                  //                   category['title'] ??
+                  //                       '', // Display category title
+                  //                   style: const TextStyle(
+                  //                     fontSize: 14,
+                  //                     fontWeight: FontWeight.bold,
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               Padding(
+                  //                 padding: const EdgeInsets.symmetric(
+                  //                     horizontal: 8.0),
+                  //                 child: Text(
+                  //                   category['description'] ??
+                  //                       '', // Display category description
+                  //                   style: const TextStyle(
+                  //                     fontSize: 12,
+                  //                     fontWeight: FontWeight.normal,
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
+
+                  Row(
+                    children: [
+                      Text(
+                        'Our Best Collections',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        'See All',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        OurbestproductList()),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              size: 25,
+                              color: Colors.white,
+                            ),
+                          ))
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 300,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: allProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = allProducts[index];
+                        final imagePath =
+                        product['product']?['image']?[0]?['path'];
+                        final imageUrl = imagePath != null
+                            ? 'https://sgitjobs.com/MaseryShoppingNew/public/$imagePath'
+                            : 'https://example.com/placeholder.png'; // Placeholder image URL
+
+                        final offerStartStr = product['offer_start'];
+                        final offerEndStr = product['offer_end'];
+                        final salePriceStr = product['sale_price'];
+                        final offerPriceStr = product['offer_price'];
+
+                        if (offerStartStr == null ||
+                            offerEndStr == null ||
+                            salePriceStr == null ||
+                            offerPriceStr == null) {
+                          // Skip this item if critical data is missing
+                          return SizedBox.shrink();
+                        }
+
+                        final offerStart = DateTime.parse(offerStartStr);
+                        final offerEnd = DateTime.parse(offerEndStr);
+                        final currentDate = DateTime.now();
+
+                        final bool isOfferPeriod =
+                            currentDate.isAfter(offerStart) &&
+                                currentDate.isBefore(offerEnd);
+                        final salePrice = double.parse(salePriceStr);
+                        final offerPrice = double.parse(offerPriceStr);
+
+                        final double discountPercentage =
+                            ((salePrice - offerPrice) / salePrice) * 100;
+                        final int discountPercentageRounded =
+                        discountPercentage.ceil();
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetail(product: product),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: 200,
+                              child: Stack(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 150,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          const BorderRadius.vertical(
+                                            top: Radius.circular(15.0),
+                                          ),
+                                          image: DecorationImage(
+                                            image: NetworkImage(imageUrl),
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                        EdgeInsets.all(8.0),
+                                        child: Text(
+                                          product['title'] ?? 'No title',
+                                          style:  GoogleFonts.montserrat(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            if (isOfferPeriod) ...[
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    '\$$salePrice',
+                                                    style:
+                                                    GoogleFonts.montserrat(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .normal,
+                                                      decoration:
+                                                      TextDecoration
+                                                          .lineThrough,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(
+                                                    '\$$offerPrice',
+                                                    style:
+                                                    GoogleFonts.montserrat(
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ] else ...[
+                                              Text(
+                                                '\$$salePrice',
+                                                style:  GoogleFonts.montserrat(
+                                                  fontSize: 17,
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (isOfferPeriod)
+                                    Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.orangeAccent,
+                                          borderRadius:
+                                          BorderRadius.circular(30.0),
+                                        ),
+                                        padding:
+                                        const EdgeInsets.all(4.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '$discountPercentageRounded%',
+                                              style:  GoogleFonts.montserrat(
+                                                fontSize: 12,
+                                                fontWeight:
+                                                FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Text(
+                                              'OFF',
+                                              style:  GoogleFonts.montserrat(
+                                                fontSize: 9,
+                                                fontWeight:
+                                                FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  Row(
+                    children: [
+                      Text(
+                        'Recent Products',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        'See All',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        GraphicsCard1()),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              size: 25,
+                              color: Colors.white,
+                            ),
+                          ))
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 300,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: recentProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = recentProducts[index];
+                        final imagePath =
+                        product['product']?['image']?[0]?['path'];
+                        final imageUrl = imagePath != null
+                            ? 'https://sgitjobs.com/MaseryShoppingNew/public/$imagePath'
+                            : 'https://example.com/placeholder.png'; // Placeholder image URL
+
+                        final offerStartStr = product['offer_start'];
+                        final offerEndStr = product['offer_end'];
+                        final salePriceStr = product['sale_price'];
+                        final offerPriceStr = product['offer_price'];
+
+                        if (offerStartStr == null ||
+                            offerEndStr == null ||
+                            salePriceStr == null ||
+                            offerPriceStr == null) {
+                          // Skip this item if critical data is missing
+                          return SizedBox.shrink();
+                        }
+
+                        final offerStart = DateTime.parse(offerStartStr);
+                        final offerEnd = DateTime.parse(offerEndStr);
+                        final currentDate = DateTime.now();
+
+                        final bool isOfferPeriod =
+                            currentDate.isAfter(offerStart) &&
+                                currentDate.isBefore(offerEnd);
+                        final salePrice = double.parse(salePriceStr);
+                        final offerPrice = double.parse(offerPriceStr);
+
+                        final double discountPercentage =
+                            ((salePrice - offerPrice) / salePrice) * 100;
+                        final int discountPercentageRounded =
+                        discountPercentage.ceil();
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetail(product: product),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: 200,
+                              child: Stack(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 150,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          const BorderRadius.vertical(
+                                            top: Radius.circular(15.0),
+                                          ),
+                                          image: DecorationImage(
+                                            image: NetworkImage(imageUrl),
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          product['title'] ?? 'No title',
+                                          style:  GoogleFonts.montserrat(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            if (isOfferPeriod) ...[
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    '\$$salePrice',
+                                                    style:
+                                                    GoogleFonts.montserrat(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .normal,
+                                                      decoration:
+                                                      TextDecoration
+                                                          .lineThrough,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(
+                                                    '\$$offerPrice',
+                                                    style:
+                                                    GoogleFonts.montserrat(
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ] else ...[
+                                              Text(
+                                                '\$$salePrice',
+                                                style:  GoogleFonts.montserrat(
+                                                  fontSize: 17,
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (isOfferPeriod)
+                                    Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.orangeAccent,
+                                          borderRadius:
+                                          BorderRadius.circular(30.0),
+                                        ),
+                                        padding:
+                                        const EdgeInsets.all(4.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '$discountPercentageRounded%',
+                                              style:  GoogleFonts.montserrat(
+                                                fontSize: 12,
+                                                fontWeight:
+                                                FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Text(
+                                              'OFF',
+                                              style:  GoogleFonts.montserrat(
+                                                fontSize: 9,
+                                                fontWeight:
+                                                FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -1178,7 +1178,7 @@ class _HomePageState extends State<HomePage> {
           // Handle bottom bar tap if necessary
         },
         favoriteProducts:
-            mostpopular.where((product) => product['isFavorite']).toList(),
+        mostpopular.where((product) => product['isFavorite']).toList(),
       ),
     );
   }

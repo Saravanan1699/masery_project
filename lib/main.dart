@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -274,6 +273,7 @@ class _AppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Awesome Notifications',
       navigatorKey: MyApp.navigatorKey,
       onGenerateInitialRoutes: onGenerateInitialRoutes,

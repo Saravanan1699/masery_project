@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -12,7 +13,9 @@ import 'package:masery_project/Categorys_pages/recent_product.dart';
 import 'package:masery_project/featureddes.dart';
 import 'Categorys_pages/categories_homepage.dart';
 import 'Categorys_pages/categorylistview.dart';
+import 'Settings/Display_notification.dart';
 import 'Settings/My_Profile.dart';
+import 'Settings/notification.dart';
 import 'bottombar.dart';
 
 class HomePage extends StatefulWidget {
@@ -164,7 +167,22 @@ class _HomePageState extends State<HomePage> {
             children: [
               IconButton(
                 icon: Icon(Icons.notifications),
-                onPressed: _incrementCount,
+                onPressed: () {
+                  // Example: Simulate receiving a notification
+                  NotificationData notificationData = NotificationData(
+                    title: 'New Notification',
+                    body: 'This is a new notification message.',
+                    image: AssetImage('assets/logo.png'), // Replace with your actual image asset
+                  );
+
+                  // Navigate to the DisplayNotification page with the notification data
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DisplayNotification(notificationData: notificationData),
+                    ),
+                  );
+                },
               ),
               Positioned(
                 right: 11,
@@ -193,6 +211,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(

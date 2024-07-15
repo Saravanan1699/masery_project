@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:palette_generator/palette_generator.dart';
 
-
 class NotificationPage extends StatefulWidget {
   const NotificationPage({
     Key? key,
     required this.receivedAction,
   }) : super(key: key);
   final ReceivedAction receivedAction;
-
 
   @override
   State<NotificationPage> createState() => NotificationPageState();
